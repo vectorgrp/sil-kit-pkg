@@ -56,6 +56,14 @@ jobs:
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: libsilkit.deb
-          path: ./libsilkit4_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
-          retention-days: 2
+          name: libsilkit4_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}
+          path: |
+            ./libsilkit4_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit4_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit-dev_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit4-dbgsym_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}.dsc
+            ./libsilkit_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.build
+            ./libsilkit_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.buildinfo
+            ./libsilkit_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.changes
+          retention-days: 1
