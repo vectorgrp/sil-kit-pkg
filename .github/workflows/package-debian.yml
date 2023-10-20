@@ -1,0 +1,64 @@
+on:
+  workflow_dispatch:
+    inputs:
+      silkit_source_url:
+        description: 'URL to the libsilkit source code tarball'
+        required: true
+        type: string
+      silkit_pkg_url:
+        description: 'URL to the repo with the SIL Kit packaging sources'
+        required: true
+        default: '.'
+        type: string
+      silkit_pkg_ref:
+        description: 'Branch/Tag of the repo with the SIL Kit packaging sources'
+        required: true
+        type: string
+        default: 'main'
+      debian_fullname:
+        description: 'Name of the maintainer creating the current package'
+        required: true
+        type: string
+      debian_email:
+        description: 'Email of the maintainer creating the current package'
+        required: true
+        type: string
+      debian_arch:
+        description: 'Revision of the package to be build'
+        required: true
+        default: 'amd64'
+        type: string
+
+jobs:
+  package_debian:
+    runs-on: ubuntu-latest
+    name: Job to build debian packages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build
+        uses: ./.github/actions/
+        id: build
+        env:
+          SILKIT_SOURCE_URL: ${{ inputs.silkit_source_url }}
+          SILKIT_PKG_URL: ${{ inputs.silkit_pkg_url }}
+          SILKIT_PKG_REF: ${{ inputs.silkit_pkg_ref }}
+          DEBFULLNAME: ${{ inputs.debian_fullname }}
+          DEBEMAIL: ${{ inputs.debian_fullname }}
+          CI_RUN: "1"
+      - name: Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
+          path: |
+            ./libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit-dev_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./silkit-utils_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit4-dbgsym_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}.dsc
+            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}.debian.tar.xz
+            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.build
+            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.buildinfo
+            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.changes
+          retention-days: 1
