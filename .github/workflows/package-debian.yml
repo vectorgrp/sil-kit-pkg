@@ -1,0 +1,61 @@
+on:
+  workflow_dispatch:
+    inputs:
+      silkit_version:
+        description: 'The version/tag of SIL Kit to package'
+        required: true
+        type: string
+      silkit_version_suffix:
+        description: 'Suffix for the version, e.g. rc1'
+        required: true
+        type: string
+      silkit_source_url:
+        description: 'URL to the libsilkit source code tarball'
+        required: true
+        type: string
+      silkit_packaging_repo:
+        description: 'URL to the repo with the SIL Kit packaging sources'
+        required: true
+        type: string
+      debian_fullname:
+        description: 'Name of the maintainer creating the current package'
+        required: true
+        type: string
+      debian_email:
+        description: 'Email of the maintainer creating the current package'
+        required: true
+        type: string
+      debian_revision:
+        description: 'Revision of the package to be build'
+        required: true
+        type: string
+      debian_arch:
+        description: 'Revision of the package to be build'
+        required: true
+        default: 'amd64'
+        type: string
+
+jobs:
+  package_debian:
+    runs-on: ubuntu-latest
+    name: Job to build debian packages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build
+        uses: ./.github/actions/
+        id: build
+        env:
+          SILKIT_VERSION: ${{ inputs.silkit_version }}
+          SILKIT_VERSION_SUFFIX: ${{ inputs.silkit_version_suffix }}
+          SILKIT_SOURCE_URL: ${{ inputs.silkit_source_url }}
+          SILKIT_PACKAGING_REPO: ${{ inputs.silkit_packaging_repo }}
+          SILKIT_DEBIAN_REVISION: ${{ inputs.debian_revision }}
+          DEBFULLNAME: ${{ inputs.debian_fullname }}
+          DEBEMAIL: ${{ inputs.debian_fullname }}
+      - name: Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: libsilkit.deb
+          path: ./libsilkit4_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
+          retention-days: 2

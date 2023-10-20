@@ -1,0 +1,10 @@
+[Unit]
+Description="Starts the silkit-registry background service"
+
+[Install]
+WantedBy=default.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/sil-kit-registry -s
+

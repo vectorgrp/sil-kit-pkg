@@ -1,0 +1,120 @@
+libsilkit (4.0.37-1) unstable; urgency=medium
+
+  * Reworked the documentation on Virtual Time Synchronization
+  * The documentation of the demo section now refers to the pre built Vector
+    SIL Kit packages and not to a source build.
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Wed, 18 Oct 2023 09:40:00 +0200
+
+libsilkit (4.0.36-3) UNRELEASED; urgency=medium
+
+  * Fixed dependencies
+ -- Jan Kraemer <jan.kraemer@vector.com>  Tue, 17 Oct 2023 08:49:56 +0200
+
+libsilkit (4.0.36-2) UNRELEASED; urgency=medium
+
+  * Added dependencies
+ -- Jan Kraemer <jan.kraemer@vector.com>  Tue, 17 Oct 2023 08:49:56 +0200
+
+libsilkit (4.0.36-1) UNRELEASED; urgency=medium
+
+  * Documentation on DashboardUri
+  * Fixed misbehavior of the sil-kit-system-controller in interactive mode on
+    user input:
+    * The sil-kit-system-controller now triggers a Stop() in
+      SystemState::Running or SystemState::Paused
+    * The sil-kit-system-controller only triggers AbortSimulation when not
+      SystemState::Running, SystemState::Paused, SystemState::Shutdown or
+      SystemState::Aborting
+  * Performance improvement of the internal serialization
+  * The final state handling of the sil-kit-system-controller in interactive
+    mode on user input has changed:
+    * Old: The sil-kit-system-controller triggered AbortSimulation if the
+      finalState was not received after 5s
+    * New: The sil-kit-system-controller retries receiving the finalState 3x5s.
+      If this fails, the sil-kit-system-controller triggers AbortSimulation (if
+      not already happened) and tries receiving the finalState 3x5s again. If
+      this fails, the sil-kit-system-controller just terminates
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Tue, 03 Oct 2023 08:49:56 +0200
+
+libsilkit (4.0.35-1) UNRELEASED; urgency=medium
+
+  * Memory management documentation introduced
+  * Integration tests for communication in the stop/shutdown/abort handlers.
+  * When building the SIL Kit documentation, the sphinx build command is no
+    longer called in a pipenv.
+  * Ensured that calling ``ISystemController::AbortSimulation()`` does not lead
+    to the system controller terminating prior to other participants receiving
+    its abort message.
+  * Ensure that userContext field for external CanFrameTransmitEvents is
+    always null.
+  * Fixed warning in VS2017 (x86) build
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Tue, 19 Sep 2023 08:49:56 +0200
+
+libsilkit (4.0.34) UNRELEASED; urgency=medium
+
+  * Behavior change of ParticipantState::Error
+
+    * Old: Several situations could lead to an ParticipantState::Error before
+      the user called StartLifecycle()
+
+      * Reception of an invalid WorkflowConfiguration
+      * Remote participant disconnected
+      * Reception of AbortSimulation
+
+    * New: ParticipantState::Error should only be reached after
+      StartLifecycle() was called
+      * Reception of a WorkflowConfiguration is not validated before
+        StartLifecycle()
+      * A disconnected remote participant is only transitioned to
+        ParticipantState::Error if he had a started Lifecycle
+      * Reaction on SystemCommang::AbortSimulation is deferred before
+        StartLifecycle()
+  * Behavior change of SystemCommand::AbortSimulation
+    * Old: Reception of AbortSimulation before StartLifecycle() led to
+      ParticipantState::Error
+    * New: Reception of AbortSimulation before StartLifecycle() is firstly
+      ignored. A later call to StartLifecycle() then directly leads to an abort
+      (transition to ParticipantState::Aborting, calling the AbortHandler)
+  * clang presets in CMakePresets.json now have the clang version in their
+    names
+  * Added an internal barrier between ParticipantState::Shutdown and setting
+    the final state promise. This ensures that the participant state updates
+    are all transmitted while shutting down.
+  * Revised log messages when shutting down / disconnecting participants
+    * Graceful, participant has lifecycle: "Participant <participantName> has
+      disconnected after gracefully shutting down",
+    * Not graceful, participant has lifecycle: "Participant <participantName>
+      has disconnected without gracefully shutting down."
+    * Registry shutdown: Connection to SIL Kit Registry was lost - no new
+      participant connections can be established.
+    * Participant without lifecycle: Participant <participantName> has
+      disconnected.
+  * Made simulation time stop for all coordinated participants when one
+    coordinated participant disconnects ungracefully
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Tue, 05 Sep 2023 08:49:56 +0200
+
+libsilkit (4.0.33) UNRELEASED; urgency=medium
+  * New experimental extension of the LIN API that allows a user to send frame
+    headers and respond to them without setting up a static configuration
+    beforehand.
+  * Added link to FMU importer in Readme.md
+  * Restructured the documentation to have separate sections for overview. It
+    is now divided into an overall introduction, a developer guide, and a user
+    guide.
+  * Removed internal use of exceptions for failing connections to the registry
+    if another connection mechanism succeeded.
+  * Fixed missing entry of RegistryAsFallbackProxy in YAML schema
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Wed, 16 Aug 2023 08:49:56 +0200
+
+libsilkit (4.0.32) UNRELEASED; urgency=medium
+
+  * Ensure that the registry rejects a connecting participant if a participant
+    with the same name is already connected.
+  * This is a Quality Assured Release.
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Wed, 02 Aug 2023 08:49:56 +0200
