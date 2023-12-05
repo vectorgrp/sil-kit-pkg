@@ -61,6 +61,7 @@ jobs:
             ./libsilkit4_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
             ./libsilkit4_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
             ./libsilkit-dev_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./silkit-utils_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
             ./libsilkit4-dbgsym_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
             ./libsilkit_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}.dsc
             ./libsilkit_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}.debian.tar.xz
