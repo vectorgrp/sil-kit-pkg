@@ -39,4 +39,4 @@ debian/*.debhelper.log
 debian/debhelper-build-stamp
 debian/*.substvars
 debian/libsilkit*/*
-debian/libsilkit*.*.debhelper
+debian/*.debhelper
