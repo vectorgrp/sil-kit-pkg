@@ -1,10 +1,29 @@
 FROM debian:sid
 
-RUN apt-get update
-RUN apt-get install -y build-essential ninja-build cmake \
-        libyaml-cpp-dev libasio-dev libfmt-dev libspdlog-dev \
-        devscripts dh-cmake lld dh-make wget
+ENV TZ "Europe/Berlin"
+ENV DEBIAN_FRONTEND "noninteractive"
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
 
-ENV USER=root
+RUN     apt update \
+    &&  apt -y install \
+            sudo \
+            build-essential \
+            debhelper \
+            devscripts \
+            dh-make \
+            dh-cmake \
+            \
+            ninja-build \
+            \
+            libfmt-dev \
+            libspdlog-dev \
+            libasio-dev \
+            libyaml-cpp-dev \
+            wget \
+    &&  true
 
-ENTRYPOINT ["./.github/actions/build_deb.sh"]
+COPY entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+
