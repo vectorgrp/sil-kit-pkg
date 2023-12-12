@@ -4,4 +4,6 @@ description: 'Package SIL Kit for Debian'
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  args:
+    - .github/actions/build_deb.sh
 
