@@ -1,8 +1,7 @@
 #!/bin/bash
 
-runner_uid=$(id -u)
-runner_gid=$(id -g)
-
+runner_uid=$(ls -lnd . | awk '{ print $3; }')
+runner_gid=$(ls -lnd . | awk '{ print $4; }')
 echo "Runner UID: ${runner_uid}"
 echo "Runner GID: ${runner_gid}"
 
