@@ -13,12 +13,12 @@ on:
         description: 'URL to the libsilkit source code tarball'
         required: true
         type: string
-      silkit_packaging_repo:
+      silkit_pkg_url:
         description: 'URL to the repo with the SIL Kit packaging sources'
         required: true
         type: string
-      silkit_packaging_repo_branch:
-        description: 'Branch of the repo with the SIL Kit packaging sources'
+      silkit_pkg_branch:
+        description: 'Branch/Tag of the repo with the SIL Kit packaging sources'
         required: true
         type: string
         default: 'main'
@@ -54,8 +54,8 @@ jobs:
           SILKIT_VERSION: ${{ inputs.silkit_version }}
           SILKIT_VERSION_SUFFIX: ${{ inputs.silkit_version_suffix }}
           SILKIT_SOURCE_URL: ${{ inputs.silkit_source_url }}
-          SILKIT_PACKAGING_REPO: ${{ inputs.silkit_packaging_repo }}
-          SILKIT_PACKAGING_REPO_BRANCH: ${{ inputs.silkit_packaging_repo_branch }}
+          SILKIT_PKG_URL: ${{ inputs.silkit_pkg_url }}
+          SILKIT_PKG_REF: ${{ inputs.silkit_pkg_ref }}
           SILKIT_DEBIAN_REVISION: ${{ inputs.debian_revision }}
           DEBFULLNAME: ${{ inputs.debian_fullname }}
           DEBEMAIL: ${{ inputs.debian_fullname }}
