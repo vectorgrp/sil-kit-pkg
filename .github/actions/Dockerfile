@@ -21,6 +21,8 @@ RUN     apt update \
             libasio-dev \
             libyaml-cpp-dev \
             wget \
+            libgtest-dev \
+            libgmock-dev \
     &&  true
 
 COPY entrypoint.sh /entrypoint.sh

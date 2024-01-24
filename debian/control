@@ -1,7 +1,7 @@
 Source: libsilkit
 Priority: optional
 Maintainer: Jan Kraemer <jan.kraemer@vector.com>
-Build-Depends: debhelper-compat (= 13), cmake, ninja-build, dh-cmake, dh-cmake-compat (= 1), dh-sequence-cpack,  libfmt-dev, libspdlog-dev, libasio-dev, libyaml-cpp-dev
+Build-Depends: debhelper-compat (= 13), cmake, ninja-build, dh-cmake, dh-cmake-compat (= 1), dh-sequence-cpack,  libfmt-dev, libspdlog-dev, libasio-dev, libyaml-cpp-dev, libgtest-dev, libgmock-dev
 Standards-Version: 4.6.0
 Section: libs
 Homepage: https://github.com/vectorgrp/sil-kit
