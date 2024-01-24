@@ -34,9 +34,11 @@ debian/.cpack/*
 debian/.debhelper/*
 debian/tmp
 obj-*
-debian/files
-debian/*.debhelper.log
-debian/debhelper-build-stamp
-debian/*.substvars
-debian/libsilkit*/*
-debian/*.debhelper
+**/files
+**/*.debhelper.log
+**/debhelper-build-stamp
+**/*.substvars
+**/libsilkit*
+**/*.debhelper
+**/silkit-utils*
+
