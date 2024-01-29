@@ -1,14 +1,6 @@
 on:
   workflow_dispatch:
     inputs:
-      silkit_version:
-        description: 'The version/tag of SIL Kit to package'
-        required: true
-        type: string
-      silkit_version_suffix:
-        description: 'Suffix for the version, e.g. rc1'
-        required: true
-        type: string
       silkit_source_url:
         description: 'URL to the libsilkit source code tarball'
         required: true
@@ -16,8 +8,9 @@ on:
       silkit_pkg_url:
         description: 'URL to the repo with the SIL Kit packaging sources'
         required: true
+        default: '.'
         type: string
-      silkit_pkg_branch:
+      silkit_pkg_ref:
         description: 'Branch/Tag of the repo with the SIL Kit packaging sources'
         required: true
         type: string
@@ -51,8 +44,6 @@ jobs:
         uses: ./.github/actions/
         id: build
         env:
-          SILKIT_VERSION: ${{ inputs.silkit_version }}
-          SILKIT_VERSION_SUFFIX: ${{ inputs.silkit_version_suffix }}
           SILKIT_SOURCE_URL: ${{ inputs.silkit_source_url }}
           SILKIT_PKG_URL: ${{ inputs.silkit_pkg_url }}
           SILKIT_PKG_REF: ${{ inputs.silkit_pkg_ref }}
