@@ -2,7 +2,7 @@
 
 echo "Building the SIL Kit packages"
 
-if [ -z $SILKIT_VERSION ] ; then
+if [ -z $SILKIT_PKG_URL ] ; then
     SILKIT_PKG_URL="."
 fi
 debian_path="${SILKIT_PKG_URL}/debian"
@@ -26,10 +26,20 @@ if ! $silkit_pkg_found ; then
     fi
 fi
 
-SILKIT_VERSION=`sed -En "s/libsilkit \(([0-9]+\.[0-9]+\.[0-9]+).*/\1/p" $debian_path/changelog`
+
+SILKIT_FULL_VERSION=`sed -En "s/libsilkit \(([0-9]+\.[0-9]+\.[0-9]+)-*([0-9]+).*/\1 \2/p" $debian_path/changelog`
+SILKIT_VERSION=`echo $SILKIT_FULL_VERSION | cut -d ' ' -f1`
+SILKIT_DEBIAN_REVISION=`echo $SILKIT_FULL_VERSION | cut -d ' ' -f2`
 echo "Packaging SILKIT Version $SILKIT_VERSION"
+echo "Packaging DEBIAN Version $SILKIT_DEBIAN_REVISION"
 
+# Check if running in CI
+if [ -n ${CI_RUN+1} ] ; then
 
+    echo "Saving VERSION and REVISION to Github step outputs!"
+    echo "silkit_version=${SILKIT_VERSION}" >> "$GITHUB_OUTPUT"
+    echo "silkit_debian_revision=${SILKIT_DEBIAN_REVISION}" >> "$GITHUB_OUTPUT"
+fi
 
 if git ls-remote -hq ${SILKIT_SOURCE_URL} ; then
     git -c http.sslVerify=false clone ${SILKIT_SOURCE_URL} --depth=1 -b "sil-kit/v${SILKIT_VERSION}" libsilkit-${SILKIT_VERSION}

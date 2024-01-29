@@ -23,10 +23,6 @@ on:
         description: 'Email of the maintainer creating the current package'
         required: true
         type: string
-      debian_revision:
-        description: 'Revision of the package to be build'
-        required: true
-        type: string
       debian_arch:
         description: 'Revision of the package to be build'
         required: true
@@ -47,22 +43,22 @@ jobs:
           SILKIT_SOURCE_URL: ${{ inputs.silkit_source_url }}
           SILKIT_PKG_URL: ${{ inputs.silkit_pkg_url }}
           SILKIT_PKG_REF: ${{ inputs.silkit_pkg_ref }}
-          SILKIT_DEBIAN_REVISION: ${{ inputs.debian_revision }}
           DEBFULLNAME: ${{ inputs.debian_fullname }}
           DEBEMAIL: ${{ inputs.debian_fullname }}
+          CI_RUN: "1"
       - name: Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: libsilkit4_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}
+          name: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
           path: |
-            ./libsilkit4_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
-            ./libsilkit4_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
-            ./libsilkit-dev_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
-            ./silkit-utils_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
-            ./libsilkit4-dbgsym_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.deb
-            ./libsilkit_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}.dsc
-            ./libsilkit_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}.debian.tar.xz
-            ./libsilkit_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.build
-            ./libsilkit_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.buildinfo
-            ./libsilkit_${{ inputs.silkit_version }}-${{ inputs.debian_revision }}_${{ inputs.debian_arch }}.changes
+            ./libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit-dev_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./silkit-utils_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit4-dbgsym_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}.dsc
+            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}.debian.tar.xz
+            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.build
+            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.buildinfo
+            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.changes
           retention-days: 1
