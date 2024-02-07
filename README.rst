@@ -104,9 +104,9 @@ When you have acquired the correct dependencies and done the correct setup all y
 
 2-5 minutes later a freshly build
 
-* libsilkit4_4.0.44-1_amd64.deb
-* libsilkit-dev_4.0.44-1_amd64.deb
-* silkit-utils_4.0.44-1_amd64.deb
+* libsilkit4_4.0.45-1_amd64.deb
+* libsilkit-dev_4.0.45-1_amd64.deb
+* silkit-utils_4.0.45-1_amd64.deb
 
 will be available in your working directory.
 
