@@ -34,7 +34,7 @@ echo "Packaging SILKIT Version $SILKIT_VERSION"
 echo "Packaging DEBIAN Version $SILKIT_DEBIAN_REVISION"
 
 # Check if running in CI
-if [ -n ${CI_RUN+1} ] ; then
+if [ -n "${CI_RUN+1}" ] ; then
 
     echo "Saving VERSION and REVISION to Github step outputs!"
     echo "silkit_version=${SILKIT_VERSION}" >> "$GITHUB_OUTPUT"
