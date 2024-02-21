@@ -5,7 +5,8 @@ Build-Depends: debhelper-compat (= 13), cmake, ninja-build, dh-cmake, dh-cmake-c
 Standards-Version: 4.6.0
 Section: libs
 Homepage: https://github.com/vectorgrp/sil-kit
-Vcs-Git: https://github.com/vectorgrp/sil-kit
+Vcs-Git: https://github.com/vectorgrp/sil-kit-pkg.git
+Vcs-Browser: https://github.com/vectorgrp/sil-kit-pkg
 Rules-Requires-Root: no
 
 Package: libsilkit-dev
