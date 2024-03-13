@@ -35,13 +35,32 @@ if [ -n "${CI_RUN+1}" ] ; then
     echo "silkit_debian_revision=${SILKIT_DEBIAN_REVISION}" >> "$GITHUB_OUTPUT"
 fi
 
-git -c http.sslVerify=false clone ${SILKIT_SOURCE_URL} --depth=1 -b "sil-kit/v${SILKIT_VERSION}" libsilkit-${SILKIT_VERSION}
+
+if [ -n SILKIT_REVISION ] ; then
+    CLONE_VERSION="main"
+else
+    CLONE_VERSION="sil-kit/v${SILKIT_VERSION}"
+fi
+
+git -c http.sslVerify=false clone ${SILKIT_SOURCE_URL} -b ${CLONE_VERSION} libsilkit-${SILKIT_VERSION}
 ret_val=$?
 if [ "$ret_val" != '0' ] ; then
-    echo "SILKIT-PKG: Could get SIL Kit sources at ${SILKIT_SOURCE_URL}:silkit/v${SILKIT_VERSION}"
+    echo "SILKIT-PKG: Could get SIL Kit sources at ${SILKIT_SOURCE_URL}:${SILKIT_REVISION}"
+    echo "Trying local directory at ${PWD}/libsilkit-${SILKIT_VERSION}"
+fi
+
+if [ ! -d ./libsilkit-${SILKIT_VERSION} ]; then
+    echo "No SIL Kit sources found!"
     exit 64
 fi
-tar -cJf libsilkit_${SILKIT_VERSION}.orig.tar.xz -C libsilkit-${SILKIT_VERSION} .
+
+echo "SILKIT REVISION: ${SILKIT_REVISION}"
+echo
+if [ -n $SILKIT_REVISION ] ; then
+    git -C ./libsilkit-${SILKIT_VERSION} reset --hard ${SILKIT_REVISION}
+fi
+
+tar --exclude='.git' -cJf libsilkit_${SILKIT_VERSION}.orig.tar.xz -C libsilkit-${SILKIT_VERSION} .
 ret_val=$?
 if [ "$ret_val" != '0' ] ; then
     echo "SILKIT-PKG: Could create orig tarball $orig_tarball"
@@ -60,7 +79,7 @@ if [ "$ret_val" -gt '1' ] ; then
 fi
 
 echo "Running debuild"
-debuild -us -uc
+debuild -us -uc --lintian-opts -E --pedantic
 ret_val=$?
 if [ "$ret_val" != '0' ] ; then
     echo "SILKIT-PKG: \"debuild -us -uc\" exit code $ret_val"
