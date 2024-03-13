@@ -10,11 +10,11 @@ on:
         required: true
         default: '.'
         type: string
-      silkit_pkg_ref:
-        description: 'Branch/Tag of the repo with the SIL Kit packaging sources'
-        required: true
+      silkit_ref:
+        description: 'Commit ref of the repo with the SIL Kit packaging sources. Choose carefully'
+        required: false
         type: string
-        default: 'main'
+        default: ''
       debian_fullname:
         description: 'Name of the maintainer creating the current package'
         required: true
@@ -41,8 +41,8 @@ jobs:
         id: build
         env:
           SILKIT_SOURCE_URL: ${{ inputs.silkit_source_url }}
+          SILKIT_REVISION: ${{ inputs.silkit_ref }}
           SILKIT_PKG_URL: ${{ inputs.silkit_pkg_url }}
-          SILKIT_PKG_REF: ${{ inputs.silkit_pkg_ref }}
           DEBFULLNAME: ${{ inputs.debian_fullname }}
           DEBEMAIL: ${{ inputs.debian_fullname }}
           CI_RUN: "1"
