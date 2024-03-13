@@ -4,17 +4,17 @@ Upstream-Contact: jan.kraemer@vector.com
 Source: https://www.github.com/vectorgrp/sil-kit
 
 Files: *
-Copyright: 2023 Vector Informatik GmbH
+Copyright: 2024 Vector Informatik GmbH
 License: MIT
 
 Files: debian/*
-Copyright: 2023 Vector Informatik GmbH
+Copyright: 2024 Vector Informatik GmbH
 License: MIT
 
 License: MIT
  MIT License
  .
- Copyright (c) 2022 Vector Informatik GmbH
+ Copyright (c) 2024 Vector Informatik GmbH
  .
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
