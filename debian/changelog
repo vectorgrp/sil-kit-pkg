@@ -1,7 +1,6 @@
-libsilkit (4.0.45-1) UNRELEASED; urgency=medium
+libsilkit (4.0.47-1) unstable; urgency=medium
 
   * Initial Package
   * Closes: #1055448
 
  -- Jan Kraemer <jan.kraemer@vector.com>  Wed, 07 Feb 2024 08:56:00 +0200
-
