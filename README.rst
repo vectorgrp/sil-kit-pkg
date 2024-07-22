@@ -31,8 +31,8 @@ To build sil-kit itself, you will need the following packages:
 
 Install these packages via::
 
-    > sudo apt install debhelper dpkg-dev dh-cmake devscripts dh-cmake cmake ninja-build \
-      libfmt-dev libspdlog-dev libasio-dev libyamlcpp-dev libgtest-dev libgmock-dev
+    > sudo apt install debhelper dpkg-dev devscripts dh-make dh-cmake cmake ninja-build \
+      libfmt-dev libspdlog-dev libasio-dev libyaml-cpp-dev libgtest-dev libgmock-dev
 
 Setting up the build environment
 ================================
@@ -60,6 +60,7 @@ DEBEMAIL: Email of the package maintainer/creator::
     export DEBEMAIL=awesome_dev@your-domain.something
 
 These environment variables also map to Github Actions input parameters.
+
 Additional Parameters for the CI
 ================================
 
@@ -77,7 +78,7 @@ Locally
 
 Some further prerequisites:
 
-* Debian SID (as of January 2024) or Ubuntu 23.04 and higer!
+* Debian SID (as of January 2024) or Ubuntu 23.04 and higher!
     Earlier versions of Ubuntu might not work, as the dependencies needed are too old to work with SIL Kit!
 * We build the package directly in the sil-kit-pkg directory.
     You can copy the script to anywhere on your system, just adapt **SILKIT_PKG_URL** accordingly
@@ -97,18 +98,25 @@ Setting up the environment
 
 Building the package
 ********************
-When you have acquired the correct dependencies and done the correct setup all you need to do is
+When you have acquired the correct dependencies and done the necessary setup all you need to do is run
 
-.. code-block: shell
+.. code-block:: shell
     ./.github/actions/build_deb.sh
 
-2-5 minutes later a freshly build
+2-5 minutes later a freshly build  will be available in your working directory.
+The script should create the following files:
 
-* libsilkit4_4.0.45-1_amd64.deb
-* libsilkit-dev_4.0.45-1_amd64.deb
-* silkit-utils_4.0.45-1_amd64.deb
+* libsilkit-dev_$VERSION_amd64.deb
+* libsilkit4-dbgsym_$VERSION_amd64.ddeb
+* libsilkit4_4.$VERSION_amd64.deb
+* libsilkit_$VERSION.debian.tar.xz
+* libsilkit_$VERSION.dsc
+* libsilkit_$VERSION_amd64.build
+* libsilkit_$VERSION_amd64.buildinfo
+* libsilkit_$VERSION_amd64.changes
+* silkit-utils-dbgsym_$VERSION_amd64.ddeb
+* silkit-utils_$VERSION_amd64.deb
 
-will be available in your working directory.
 
 Github CI
 ---------
@@ -130,4 +138,4 @@ See `Setting up the environment`_. Additionally set the following variables:
 * DEBIAN_ARCH
     amd64
 
-Click the ``Run Workflow`` Button. The `.deb` packages will be in the artifacts of this Workflow run
+Click the ``Run Workflow`` Button. The `.deb` packages will be in the artifacts of this Workflow run.
