@@ -35,6 +35,12 @@ if [ -n "${CI_RUN+1}" ] ; then
     echo "silkit_debian_revision=${SILKIT_DEBIAN_REVISION}" >> "$GITHUB_OUTPUT"
 fi
 
+if [ -n SILKIT_VENDORED_PACKAGES ] ; then
+   SUBMODULE_CMD="--recurse-submodules --shallow-submodules"
+else
+   SUBMODULE_CMD=""
+fi
+
 
 if [ -n SILKIT_REVISION ] ; then
     CLONE_VERSION="main"
@@ -42,7 +48,7 @@ else
     CLONE_VERSION="sil-kit/v${SILKIT_VERSION}"
 fi
 
-git -c http.sslVerify=false clone --recurse-submodules --shallow-submodules --depth=1 ${SILKIT_SOURCE_URL} -b ${CLONE_VERSION} libsilkit-${SILKIT_VERSION}
+git -c http.sslVerify=false clone ${SUBMODULE_CMD} --depth=1 ${SILKIT_SOURCE_URL} -b ${CLONE_VERSION} libsilkit-${SILKIT_VERSION}
 ret_val=$?
 if [ "$ret_val" != '0' ] ; then
     echo "SILKIT-PKG: Could get SIL Kit sources at ${SILKIT_SOURCE_URL}:${SILKIT_REVISION}"
