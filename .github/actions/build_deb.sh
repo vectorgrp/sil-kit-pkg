@@ -88,21 +88,31 @@ if [ "$ret_val" -gt '1' ] ; then
     exit 64
 fi
 
-platform_additional_build_flags=""
-debuild_ignore_deps=""
 # Set build environment for the different platforms
-if [ "$platform" = 22.04 ] ; then
-    platform_additional_build_flags=-gdwarf-4
-    echo "Stuff"
-else if [ "$platform" = 20.04 ] ; then
-    debuild_ignore_deps="-d"
+case $platform in
+    20.04 ) platform_additional_build_flags=""
+            debuild_additional_flags="-d"
+            C_COMPILER="clang-10"
+            CXX_COMPILER="clang++-10" ;;
 
-fi
+    22.04 ) platform_additional_build_flags=-gdwarf-4
+            debuild_additional_flags=""
+            C_COMPILER="clang"
+            CXX_COMPILER="clang++" ;;
 
-echo "Additional Build flags: $platform_additional_build_flags"
+    * )     platform_additional_build_flags=""
+            debuild_additional_flags=""
+            C_COMPILER="clang"
+            CXX_COMPILER="clang++" ;;
+esac
+
+echo "Additional build flags: $platform_additional_build_flags"
+echo "Additional debuild flags: $debuild_additional_flags"
+echo "C COMPILER:   $C_COMPILER"
+echo "CXX COMPILER: $CXX_COMPILER"
 
 echo "Running debuild"
-debuild $debuild_ignore_deps --set-envvar=PLATFORM_BUILD_FLAGS=$platform_additional_build_flags --set-envvar=CC=clang --set-envvar=CXX=clang++ \
+debuild $debuild_additional_flags --set-envvar=PLATFORM_BUILD_FLAGS=$platform_additional_build_flags --set-envvar=CC=$C_COMPILER --set-envvar=CXX=$CXX_COMPILER \
     -us -uc --lintian-opts -E --pedantic
 
 ret_val=$?
