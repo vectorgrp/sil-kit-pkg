@@ -7,6 +7,10 @@ if [ -z $SILKIT_PKG_URL ] ; then
 fi
 debian_path="${SILKIT_PKG_URL}/debian"
 
+platform=$1
+
+echo "SILKIT-PKG: Building for platform $platform"
+
 silkit_pkg_found=false
 # Check if the provided path has a debian directory
 if [ ! -d ${debian_path} ] ; then
@@ -35,6 +39,8 @@ if [ -n "${CI_RUN+1}" ] ; then
     echo "silkit_debian_revision=${SILKIT_DEBIAN_REVISION}" >> "$GITHUB_OUTPUT"
 fi
 
+
+## Set GIT Options
 if [ -n SILKIT_VENDORED_PACKAGES ] ; then
    SUBMODULE_CMD="--recurse-submodules --shallow-submodules"
 else
@@ -63,6 +69,9 @@ fi
 echo "SILKIT REVISION: ${SILKIT_REVISION}"
 echo
 if [ -n $SILKIT_REVISION ] ; then
+    echo "GETTING TAGS"
+    git -c http.sslVerify=false -C ./libsilkit-${SILKIT_VERSION} fetch --depth=1 origin refs/tags/${SILKIT_REVISION}:refs/tags/${SILKIT_REVISION} --no-tags
+    echo "RESETTING TO TAGS"
     git -C ./libsilkit-${SILKIT_VERSION} reset --hard ${SILKIT_REVISION}
 fi
 
@@ -84,8 +93,33 @@ if [ "$ret_val" -gt '1' ] ; then
     exit 64
 fi
 
+# Set build environment for the different platforms
+case $platform in
+    20.04 ) platform_additional_build_flags=""
+            debuild_additional_flags="-d"
+            C_COMPILER="clang-10"
+            CXX_COMPILER="clang++-10" ;;
+
+    22.04 ) platform_additional_build_flags=-gdwarf-4
+            debuild_additional_flags=""
+            C_COMPILER="clang"
+            CXX_COMPILER="clang++" ;;
+
+    * )     platform_additional_build_flags=""
+            debuild_additional_flags=""
+            C_COMPILER="clang"
+            CXX_COMPILER="clang++" ;;
+esac
+
+echo "Additional build flags: $platform_additional_build_flags"
+echo "Additional debuild flags: $debuild_additional_flags"
+echo "C COMPILER:   $C_COMPILER"
+echo "CXX COMPILER: $CXX_COMPILER"
+
 echo "Running debuild"
-debuild -us -uc --lintian-opts -E --pedantic
+debuild $debuild_additional_flags --set-envvar=PLATFORM_BUILD_FLAGS=$platform_additional_build_flags --set-envvar=CC=$C_COMPILER --set-envvar=CXX=$CXX_COMPILER \
+    -us -uc --lintian-opts -E --pedantic
+
 ret_val=$?
 if [ "$ret_val" != '0' ] ; then
     echo "SILKIT-PKG: \"debuild -us -uc\" exit code $ret_val"
