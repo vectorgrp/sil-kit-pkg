@@ -42,6 +42,9 @@ jobs:
           submodules: true
       - name: Install build dependencies
         run: sudo apt install -y debhelper dpkg-dev devscripts dh-make
+      - name: Install cmake
+        run: |
+          sh ./.github/actions/fetch_cmake.sh
       - name: Build
         id: build
         env:
