@@ -52,7 +52,7 @@ jobs:
           DEBEMAIL: ${{ inputs.debian_fullname }}
           CI_RUN: "1"
         run: |
-          sh ./.github/actions/build_deb.sh
+          sh ./.github/actions/build_deb.sh 20.04
       - name: Artifact
         uses: actions/upload-artifact@v4
         with:
