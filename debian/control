@@ -1,7 +1,7 @@
 Source: libsilkit
 Priority: optional
 Maintainer: Jan Kraemer <jan.kraemer@vector.com>
-Build-Depends: debhelper-compat (= 13), cmake, ninja-build, dh-cmake, dh-cmake-compat (= 1), dh-sequence-cpack
+Build-Depends: debhelper-compat (= 12), cmake, ninja-build
 Standards-Version: 4.6.0
 Section: libs
 Homepage: https://github.com/vectorgrp/sil-kit

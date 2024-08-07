@@ -1,16 +1,17 @@
 #!/usr/bin/make -f
 export DH_VERBOSE = 1
+export DPKG_EXPORT_BUILDFLAGS = 1
+export DEB_CXXFLAGS_MAINT_APPEND = "${PLATFORM_BUILD_FLAGS}"
 
 %:
 	dh $@ --buildsystem=cmake+ninja --builddirectory=_build
 
+export DEB_BUILD_MAINT_OPTIONS=optimize=-lto
 override_dh_auto_configure:
 	dh_auto_configure -- -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_SOURCE=Off -DSILKIT_BUILD_LINUX_PACKAGE=On
 
 override_dh_auto_test:
 	ctest --output-on-failure -R '^(I|T)' --test-dir _build
-
-override_dh_dwz:
 
 override_dh_installsystemd:
 	dh_installsystemd  -psilkit-utils --name silkit-registry silkit-registry.service --no-start

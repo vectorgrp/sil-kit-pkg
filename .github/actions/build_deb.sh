@@ -7,6 +7,10 @@ if [ -z $SILKIT_PKG_URL ] ; then
 fi
 debian_path="${SILKIT_PKG_URL}/debian"
 
+platform=$1
+
+echo "SILKIT-PKG: Building for platform $platform"
+
 silkit_pkg_found=false
 # Check if the provided path has a debian directory
 if [ ! -d ${debian_path} ] ; then
@@ -84,8 +88,19 @@ if [ "$ret_val" -gt '1' ] ; then
     exit 64
 fi
 
+platform_additional_build_flags=""
+# Set build environment for the different platforms
+if [ "$platform" = 22.04 ] ; then
+    platform_additional_build_flags=-gdwarf-4
+    echo "Stuff"
+fi
+
+echo "Additional Build flags: $platform_additional_build_flags"
+
 echo "Running debuild"
-debuild -us -uc --lintian-opts -E --pedantic
+debuild --set-envvar=PLATFORM_BUILD_FLAGS=$platform_additional_build_flags --set-envvar=CC=clang --set-envvar=CXX=clang++ \
+    #-us -uc --lintian-opts -E --pedantic
+
 ret_val=$?
 if [ "$ret_val" != '0' ] ; then
     echo "SILKIT-PKG: \"debuild -us -uc\" exit code $ret_val"
