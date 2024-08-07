@@ -1,3 +1,4 @@
+name: "Ubuntu Packaging Workflow"
 on:
   workflow_dispatch:
     inputs:
@@ -33,11 +34,19 @@ jobs:
   package_debian:
     runs-on: ubuntu-latest
     name: Job to build debian packages
+    container:
+      image: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-20.04:main
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install build dependencies
+        run: sudo apt install -y debhelper dpkg-dev devscripts dh-make
+      - name: Install cmake
+        run: |
+          sh ./.github/actions/fetch_cmake.sh
       - name: Build
-        uses: ./.github/actions/
         id: build
         env:
           SILKIT_SOURCE_URL: ${{ inputs.silkit_source_url }}
@@ -46,16 +55,18 @@ jobs:
           DEBFULLNAME: ${{ inputs.debian_fullname }}
           DEBEMAIL: ${{ inputs.debian_fullname }}
           CI_RUN: "1"
+        run: |
+          sh ./.github/actions/build_deb.sh 20.04
       - name: Artifact
         uses: actions/upload-artifact@v4
         with:
           name: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
           path: |
             ./libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
-            ./libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit4-dbgsym_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.ddeb
             ./libsilkit-dev_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
             ./silkit-utils_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
-            ./libsilkit4-dbgsym_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./silkit-utils-dbgsym_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.ddeb
             ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}.dsc
             ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}.debian.tar.xz
             ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.build
