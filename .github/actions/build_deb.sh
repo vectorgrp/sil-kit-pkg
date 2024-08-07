@@ -89,17 +89,21 @@ if [ "$ret_val" -gt '1' ] ; then
 fi
 
 platform_additional_build_flags=""
+debuild_ignore_deps=""
 # Set build environment for the different platforms
 if [ "$platform" = 22.04 ] ; then
     platform_additional_build_flags=-gdwarf-4
     echo "Stuff"
+else if [ "$platform" = 20.04 ] ; then
+    debuild_ignore_deps="-d"
+
 fi
 
 echo "Additional Build flags: $platform_additional_build_flags"
 
 echo "Running debuild"
-debuild --set-envvar=PLATFORM_BUILD_FLAGS=$platform_additional_build_flags --set-envvar=CC=clang --set-envvar=CXX=clang++ \
-    #-us -uc --lintian-opts -E --pedantic
+debuild $debuild_ignore_deps --set-envvar=PLATFORM_BUILD_FLAGS=$platform_additional_build_flags --set-envvar=CC=clang --set-envvar=CXX=clang++ \
+    -us -uc --lintian-opts -E --pedantic
 
 ret_val=$?
 if [ "$ret_val" != '0' ] ; then
