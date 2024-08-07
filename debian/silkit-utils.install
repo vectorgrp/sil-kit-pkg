@@ -1,0 +1,6 @@
+usr/bin/sil-kit-monitor
+usr/bin/sil-kit-registry
+usr/bin/sil-kit-system-controller
+usr/share/man/man1/sil-kit-monitor.1
+usr/share/man/man1/sil-kit-registry.1
+usr/share/man/man1/sil-kit-system-controller.1
