@@ -91,7 +91,7 @@ fi
 # Set build environment for the different platforms
 case $platform in
     20.04 ) platform_additional_build_flags=""
-            debuild_additional_flags="-d"
+            debuild_additional_flags="-d --prepend-path=/opt/vector/bin/"
             C_COMPILER="clang-10"
             CXX_COMPILER="clang++-10" ;;
 
