@@ -62,10 +62,10 @@ jobs:
           name: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
           path: |
             ./libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
-            ./libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./libsilkit4-dbgsym_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.ddeb
             ./libsilkit-dev_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
             ./silkit-utils_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
-            ./libsilkit4-dbgsym_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
+            ./silkit-utils-dbgsym_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.ddeb
             ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}.dsc
             ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}.debian.tar.xz
             ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.build
