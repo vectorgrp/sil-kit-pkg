@@ -39,6 +39,8 @@ if [ -n "${CI_RUN+1}" ] ; then
     echo "silkit_debian_revision=${SILKIT_DEBIAN_REVISION}" >> "$GITHUB_OUTPUT"
 fi
 
+
+## Set GIT Options
 if [ -n SILKIT_VENDORED_PACKAGES ] ; then
    SUBMODULE_CMD="--recurse-submodules --shallow-submodules"
 else
@@ -67,6 +69,9 @@ fi
 echo "SILKIT REVISION: ${SILKIT_REVISION}"
 echo
 if [ -n $SILKIT_REVISION ] ; then
+    echo "GETTING TAGS"
+    git -c http.sslVerify=false -C ./libsilkit-${SILKIT_VERSION} fetch --depth=1 origin refs/tags/${SILKIT_REVISION}:refs/tags/${SILKIT_REVISION} --no-tags
+    echo "RESETTING TO TAGS"
     git -C ./libsilkit-${SILKIT_VERSION} reset --hard ${SILKIT_REVISION}
 fi
 
