@@ -22,17 +22,10 @@ To build sil-kit itself, you will need the following packages:
 
 * cmake
 * ninja-build
-* libfmt-dev
-* libspdlog-dev
-* libasio-dev
-* libyamlcpp-dev
-* libgtest-dev
-* libgmock-dev
 
 Install these packages via::
 
-    > sudo apt install debhelper dpkg-dev devscripts dh-make dh-cmake cmake ninja-build \
-      libfmt-dev libspdlog-dev libasio-dev libyaml-cpp-dev libgtest-dev libgmock-dev
+    > sudo apt install debhelper dpkg-dev devscripts dh-make cmake ninja-build
 
 Setting up the build environment
 ================================
@@ -59,6 +52,10 @@ DEBEMAIL: Email of the package maintainer/creator::
 
     export DEBEMAIL=awesome_dev@your-domain.something
 
+SILKIT_VENDORED_PACKAGES: Instructs the build script to use the vendored 3rd party libraries
+
+    export SILKIT_VENDORED_PACKAGES
+
 These environment variables also map to Github Actions input parameters.
 
 Additional Parameters for the CI
@@ -78,8 +75,6 @@ Locally
 
 Some further prerequisites:
 
-* Debian SID (as of January 2024) or Ubuntu 23.04 and higher!
-    Earlier versions of Ubuntu might not work, as the dependencies needed are too old to work with SIL Kit!
 * We build the package directly in the sil-kit-pkg directory.
     You can copy the script to anywhere on your system, just adapt **SILKIT_PKG_URL** accordingly
 * sil-kit-pkg is versioned akine to sil-kit, e.g. sil-kit-pkg version 4.0.44 will ONLY build sil-kit 4.0.44
@@ -98,10 +93,9 @@ Setting up the environment
 
 Building the package
 ********************
-When you have acquired the necessary dependencies and have done the necessary setup all you need to do is run
-
+The `build_deb.sh` script can be used to build the SilKit package. It takes the current Ubuntu release version as an optional argument. E.g. to run it on Ubuntu 22.04 use:
 .. code-block:: shell
-    ./.github/actions/build_deb.sh
+    ./.github/actions/build_deb.sh 22.04
 
 2-5 minutes later a freshly build  will be available in your working directory.
 The script should create the following files:
