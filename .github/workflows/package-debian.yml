@@ -6,16 +6,20 @@ on:
         description: 'URL to the libsilkit source code tarball'
         required: true
         type: string
+      silkit_source_ref:
+        description: 'Commit ref of the repo with the SIL Kit packaging sources. Choose carefully'
+        required: false
+        type: string
+        default: ''
       silkit_pkg_url:
         description: 'URL to the repo with the SIL Kit packaging sources'
         required: true
         default: '.'
         type: string
-      silkit_ref:
-        description: 'Commit ref of the repo with the SIL Kit packaging sources. Choose carefully'
+      silkit_pkg_tag:
+        description: 'sil-kit-pkg tag used/created for a release'
         required: false
         type: string
-        default: ''
       debian_fullname:
         description: 'Name of the maintainer creating the current package'
         required: true
@@ -25,7 +29,7 @@ on:
         required: true
         type: string
       debian_arch:
-        description: 'Revision of the package to be build'
+        description: 'Ubuntu CPU arch the package should be build for'
         required: true
         default: 'amd64'
         type: string
@@ -42,7 +46,7 @@ jobs:
         with:
           submodules: true
       - name: Install build dependencies
-        run: sudo apt install -y debhelper dpkg-dev devscripts dh-make
+        run: sudo apt install -y debhelper dpkg-dev devscripts dh-make zip
       - name: Install cmake
         run: |
           sh ./.github/actions/fetch_cmake.sh
@@ -50,7 +54,7 @@ jobs:
         id: build
         env:
           SILKIT_SOURCE_URL: ${{ inputs.silkit_source_url }}
-          SILKIT_REVISION: ${{ inputs.silkit_ref }}
+          SILKIT_REVISION: ${{ inputs.silkit_source_ref }}
           SILKIT_PKG_URL: ${{ inputs.silkit_pkg_url }}
           DEBFULLNAME: ${{ inputs.debian_fullname }}
           DEBEMAIL: ${{ inputs.debian_fullname }}
@@ -58,18 +62,50 @@ jobs:
         run: |
           sh ./.github/actions/build_deb.sh 20.04
       - name: Artifact
+        env:
+          ARTIFACT_NAME: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
         uses: actions/upload-artifact@v4
         with:
-          name: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
+          name: ${{ env.ARTIFACT_NAME }}
           path: |
-            ./libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
-            ./libsilkit4-dbgsym_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.ddeb
-            ./libsilkit-dev_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
-            ./silkit-utils_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.deb
-            ./silkit-utils-dbgsym_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.ddeb
-            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}.dsc
-            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}.debian.tar.xz
-            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.build
-            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.buildinfo
-            ./libsilkit_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}.changes
+            ./*.dsc
+            ./*.build*
+            ./*.changes
+            ./*.*deb
           retention-days: 1
+      - name: Prepare artifact
+        if: inputs.silkit_pkg_tag != ''
+        env:
+          ARTIFACT_NAME: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
+        run: |
+          zip ${{ env.ARTIFACT_NAME }}.zip ./*.dsc ./*.build* ./*.changes ./*.*deb
+          sha256sum ${{ env.ARTIFACT_NAME }}.zip > SHA256
+      - name: Create git tag
+        if: inputs.silkit_pkg_tag != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: 'refs/tags/${{ inputs.silkit_pkg_tag }}',
+                sha: context.sha,
+              })
+            } catch(error) {
+              core.warning("Could not create the specified ref, continuing without it!")
+            }
+      - name: Release artifact
+        if: inputs.silkit_pkg_tag != ''
+        env:
+          ARTIFACT_NAME: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: ${{ contains(inputs.silkit_pkg_tag, '-rc') }}
+          draft: false
+          tag_name: ${{ inputs.silkit_pkg_tag }}
+          name: ${{ inputs.silkit_pkg_tag }}
+          files: |
+            ./${{ env.ARTIFACT_NAME }}.zip
+            SHA256
+
