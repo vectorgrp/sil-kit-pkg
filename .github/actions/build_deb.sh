@@ -39,71 +39,73 @@ if [ -n "${CI_RUN+1}" ] ; then
     echo "silkit_debian_revision=${SILKIT_DEBIAN_REVISION}" >> "$GITHUB_OUTPUT"
 fi
 
-## Set GIT Options
-if [ -n SILKIT_VENDORED_PACKAGES ] ; then
-    echo "Vendoring Packages!"
-    SUBMODULE_CMD="--recurse-submodules --shallow-submodules"
+if [ -d ${SILKIT_SOURCE_URL} ] ; then
+    echo "SILKIT-PKG: Using local checkout!"
+    silkit_path="${SILKIT_SOURCE_URL}"
+
 else
-    SUBMODULE_CMD=""
-fi
+    ## Set GIT Options
+    if [ -n SILKIT_VENDORED_PACKAGES ] ; then
+        echo "Vendoring Packages!"
+        SUBMODULE_CMD="--recurse-submodules --shallow-submodules"
+    else
+        SUBMODULE_CMD=""
+    fi
 
-# Since we want to allow building SIL KIT from VERSIONS different from the current CHANGELOG Version
-# We need to distinguish how to checkout and reset the local git repo
-if [ -n SILKIT_REVISION ] ; then
-    CLONE_VERSION="main"
-else
-    CLONE_VERSION="sil-kit/v${SILKIT_VERSION}"
-fi
+    # Since we want to allow building SIL KIT from VERSIONS different from the current CHANGELOG Version
+    # We need to distinguish how to checkout and reset the local git repo
+    if [ -n SILKIT_REVISION ] ; then
+        CLONE_VERSION="main"
+    else
+        CLONE_VERSION="sil-kit/v${SILKIT_VERSION}"
+    fi
 
-git -c http.sslVerify=false clone ${SUBMODULE_CMD} --depth=1 ${SILKIT_SOURCE_URL} -b ${CLONE_VERSION} libsilkit-${SILKIT_VERSION}
-ret_val=$?
-if [ "$ret_val" != '0' ] ; then
-    echo "SILKIT-PKG: Could get SIL Kit sources at ${SILKIT_SOURCE_URL}:${SILKIT_REVISION}"
-    echo "Trying local directory at ${PWD}/libsilkit-${SILKIT_VERSION}"
-fi
-
-if [ ! -d ./libsilkit-${SILKIT_VERSION} ]; then
-    echo "No SIL Kit sources found!"
-    exit 64
-fi
-
-if [ -n $SILKIT_REVISION ] ; then
-    echo "WARNING: SILKIT GIT REF specified! MAKE SURE THAT THIS VERSION IS COMPATIBLE WITH THE VERSION SPECIFIED IN THE DEBIAN/UBUNTU CHANGELOG!"
-    echo "SILKIT REVISION: ${SILKIT_REVISION}"
-    echo "TRY GETTING REF AS TAGS"
-    git -c http.sslVerify=false -C ./libsilkit-${SILKIT_VERSION} fetch --depth=1 origin refs/tags/${SILKIT_REVISION}:refs/tags/${SILKIT_REVISION} --no-tags
+    git -c http.sslVerify=false clone ${SUBMODULE_CMD} --depth=1 ${SILKIT_SOURCE_URL} -b ${CLONE_VERSION} libsilkit-${SILKIT_VERSION}
     ret_val=$?
     if [ "$ret_val" != '0' ] ; then
-        echo "TRY GETTING REF AS COMMIT SHA"
-        git -c http.sslVerify=false -C ./libsilkit-${SILKIT_VERSION} fetch --depth=1 origin ${SILKIT_REVISION}
-        ret_val=$?
+        echo "SILKIT-PKG: Could get SIL Kit sources at ${SILKIT_SOURCE_URL}:${SILKIT_REVISION}"
+        echo "Trying local directory at ${PWD}/libsilkit-${SILKIT_VERSION}"
     fi
 
-    if [ "$ret_val" != '0' ] ; then
-        echo "Could not find REF $SILKIT_REVISION in $SILKIT_SOURCE_URL\nExiting"
+    if [ ! -d ./libsilkit-${SILKIT_VERSION} ]; then
+        echo "No SIL Kit sources found!"
         exit 64
     fi
-    echo "RESETTING TO REF: $SILKIT_REVISION"
-    git -C ./libsilkit-${SILKIT_VERSION} reset --hard ${SILKIT_REVISION}
+
+    silkit_path="./libsilkit-${SILKIT_VERSION}"
+
+    # Get the correct git ref of the package
+    if [ -n $SILKIT_REVISION ] ; then
+        echo "WARNING: SILKIT GIT REF specified! MAKE SURE THAT THIS VERSION IS COMPATIBLE WITH THE VERSION SPECIFIED IN THE DEBIAN/UBUNTU CHANGELOG!"
+        echo "SILKIT REVISION: ${SILKIT_REVISION}"
+        echo "TRY GETTING REF AS TAGS"
+        git -c http.sslVerify=false -C ./libsilkit-${SILKIT_VERSION} fetch --depth=1 origin refs/tags/${SILKIT_REVISION}:refs/tags/${SILKIT_REVISION} --no-tags
+        ret_val=$?
+        if [ "$ret_val" != '0' ] ; then
+            echo "TRY GETTING REF AS COMMIT SHA"
+            git -c http.sslVerify=false -C ./libsilkit-${SILKIT_VERSION} fetch --depth=1 origin ${SILKIT_REVISION}
+            ret_val=$?
+        fi
+
+        if [ "$ret_val" != '0' ] ; then
+            echo "Could not find REF $SILKIT_REVISION in $SILKIT_SOURCE_URL\nExiting"
+            exit 64
+        fi
+        echo "RESETTING TO REF: $SILKIT_REVISION"
+        git -C ./libsilkit-${SILKIT_VERSION} reset --hard ${SILKIT_REVISION}
+    fi
 fi
 
-tar --exclude='.git' -cJf libsilkit_${SILKIT_VERSION}.orig.tar.xz -C libsilkit-${SILKIT_VERSION} .
+tar --exclude='.git' -czf ${silkit_path}/../libsilkit_${SILKIT_VERSION}.orig.tar.gz -C ${silkit_path} .
+echo "Running tar on ${silkit_path}:"
 ret_val=$?
 if [ "$ret_val" != '0' ] ; then
     echo "SILKIT-PKG: Could create orig tarball $orig_tarball"
     exit 64
 fi
 
-cp -r ${debian_path} libsilkit-${SILKIT_VERSION}
-cd libsilkit-${SILKIT_VERSION}/
-
-echo "Running dh_make"
-dh_make -ly
-ret_val=$?
-if [ "$ret_val" -gt '1' ] ; then
-    echo "SILKIT-PKG: \"dh_make -ly\" exit code $ret_val"
-    exit 64
-fi
+cp -r ${debian_path} ${silkit_path}
+cd ${silkit_path}
 
 # Set build environment for the different platforms
 case $platform in
@@ -128,9 +130,8 @@ echo "Additional debuild flags: $debuild_additional_flags"
 echo "C COMPILER:   $C_COMPILER"
 echo "CXX COMPILER: $CXX_COMPILER"
 
-echo "Running debuild"
-debuild $debuild_additional_flags --set-envvar=PLATFORM_BUILD_FLAGS=$platform_additional_build_flags --set-envvar=CC=$C_COMPILER --set-envvar=CXX=$CXX_COMPILER \
-    -us -uc --lintian-opts -E --pedantic
+echo "Running debuild:"
+debuild $debuild_additional_flags --set-envvar=PLATFORM_BUILD_FLAGS=$platform_additional_build_flags --set-envvar=CC=$C_COMPILER --set-envvar=CXX=$CXX_COMPILER -us -uc --lintian-opts -E --pedantic
 
 ret_val=$?
 if [ "$ret_val" != '0' ] ; then
