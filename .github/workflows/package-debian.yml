@@ -29,6 +29,9 @@ on:
         default: 'amd64'
         type: string
 
+env:
+  ARTIFACT_NAME: silkit-ubuntu-20.04-deb
+
 jobs:
   package_debian:
     runs-on: ubuntu-latest
@@ -80,8 +83,6 @@ jobs:
           --package-directory "$PKG_DIR"
 
       - name: Artifact
-        env:
-          ARTIFACT_NAME: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
@@ -94,8 +95,6 @@ jobs:
 
       - name: Prepare artifact
         if: inputs.silkit_pkg_ref != ''
-        env:
-          ARTIFACT_NAME: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
         run: |
           zip -j ${{ env.ARTIFACT_NAME }}.zip ./*.dsc ./*.build* ./*.changes ./*.*deb
           sha256sum ./${{ env.ARTIFACT_NAME }}.zip > ./SHA256
@@ -118,8 +117,6 @@ jobs:
 
       - name: Release artifact
         if: inputs.silkit_pkg_ref != ''
-        env:
-          ARTIFACT_NAME: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
         uses: softprops/action-gh-release@v2
         with:
           prerelease: ${{ contains(inputs.silkit_pkg_ref, '-rc') }}
