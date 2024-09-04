@@ -1,6 +1,15 @@
 libsilkit (4.0.52-1) UNRELEASED; urgency=medium
 
- -- Jan Kraemer <jan.kraemer@vector.com>  Thu, 08 Aug 2024 11:05:00 +0200
+  [ Daniel Edwards ]
+  * Fixed crash in sil-kit-registry utility that happened when the dashboard is enabled,
+    but not actually available.
+
+  [ Jonas Holley ]
+  * Message aggregation for simulations with time synchronization.
+    Accessible via the experimental section in the Participant Configuration
+    (Experimental | TimeSynchronization | EnableMessageAggregation).
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Wed, 04 Sep 2024 08:35:00 +0200
 
 libsilkit (4.0.51-1) UNRELEASED; urgency=medium
 
