@@ -1,7 +1,7 @@
 Source: libsilkit
 Priority: optional
 Maintainer: Jan Kraemer <jan.kraemer@vector.com>
-Build-Depends: debhelper-compat (= 12), cmake, ninja-build
+Build-Depends: debhelper-compat (= 12), cmake, ninja-build, clang
 Standards-Version: 4.6.0
 Section: libs
 Homepage: https://github.com/vectorgrp/sil-kit
@@ -27,7 +27,7 @@ Description: Development packages for libsilkit
 Package: libsilkit4
 Architecture: any
 Multi-Arch: no
-Depends: ${shlibs:Depends}, ${misc:Depends}, libyaml-cpp-dev
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: silkit-utils
 Description: Simulation in the loop kit by Vector
  The Vector SIL Kit is an open-source library for connecting

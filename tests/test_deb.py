@@ -9,6 +9,7 @@ import logging
 import os
 import shlex
 import subprocess
+import signal
 
 from argparse import ArgumentParser
 from pathlib import Path
@@ -43,7 +44,7 @@ def run_registry():
     print("\nRun sil-kit-registry")
     print("--------------------------------\n", flush=True)
     cmd = 'sil-kit-registry'
-    registry_proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE)
+    registry_proc = subprocess.Popen(cmd, shell=False)
     sleep(2)
 
     if registry_proc.poll() != None:
@@ -57,8 +58,9 @@ def close_registry(reg_proc: subprocess.Popen):
     print("\nClose the SIL Kit registry")
     print("--------------------------------\n", flush=True)
 
-    reg_proc.communicate(b'\n', 5)
+    reg_proc.send_signal(signal.SIGINT)
 
+    reg_proc.wait(5)
     if reg_proc.returncode != 0:
         print(f"sil-kit-registry did not terminate correctly ({reg_proc.returncode})! Exiting with ERROR!")
         exit(64)
