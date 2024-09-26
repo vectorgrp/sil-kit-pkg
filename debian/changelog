@@ -1,3 +1,11 @@
+libsilkit (4.0.53-1ubuntu1) UNRELEASED; urgency=medium
+
+  [ Andreas Rentschler ]
+  * Harmonized user interface of commandline utilities
+    Registry, Monitor, and SystemController. 
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Thu, 26 Sep 2024 09:15:00 +0200
+
 libsilkit (4.0.52-1) UNRELEASED; urgency=medium
 
   [ Daniel Edwards ]
