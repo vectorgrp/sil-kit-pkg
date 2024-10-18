@@ -1,8 +1,14 @@
+libsilkit (4.0.53-1ubuntu2) UNRELEASED; urgency=medium
+
+  * Added ThirdParty Licenses and Copyrights
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Fri, 18 Oct 2024 10:30:00 +0200
+
 libsilkit (4.0.53-1ubuntu1) UNRELEASED; urgency=medium
 
   [ Andreas Rentschler ]
   * Harmonized user interface of commandline utilities
-    Registry, Monitor, and SystemController. 
+    Registry, Monitor, and SystemController.
 
  -- Jan Kraemer <jan.kraemer@vector.com>  Thu, 26 Sep 2024 09:15:00 +0200
 
