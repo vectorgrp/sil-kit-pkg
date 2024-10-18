@@ -119,13 +119,19 @@ def clone_silkit(build_info: BuildInfo):
                        check=True)
 
         if build_info.silkit_info.recursive == True:
+
+            submodules = ["fmt", "spdlog", "googletest", "yaml-cpp", "asio"]
+
             logger.debug("Syncing the submodules!")
-            subprocess.run(['git', 'submodule', 'sync', '--recursive'],
-                           cwd=repoPath,
-                           check=True)
-            subprocess.run(['git', 'submodule', 'update', '--init', '--depth=1', '--recursive'],
-                           cwd=repoPath,
-                           check=True)
+
+            for submodule in submodules:
+                logger.debug(f"Syncing: {submodule}")
+                subprocess.run(['git', 'submodule', 'sync', "ThirdParty/" + submodule],
+                               cwd=repoPath,
+                               check=True)
+                subprocess.run(['git', 'submodule', 'update', '--init', '--depth=1', "ThirdParty/" + submodule],
+                               cwd=repoPath,
+                               check=True)
 
     except Exception as ex:
         logger.error(f"While cloning the SilKit Repo something occured: {str(ex)}")
