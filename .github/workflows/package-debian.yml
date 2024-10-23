@@ -96,7 +96,7 @@ jobs:
           mkdir -p $PKG_OUTDIR
           touch $PKG_WORKDIR/build_cfg.json
           printf %s $BUILD_SETTINGS  > $PKG_WORKDIR/build_cfg.json
-          python3 sil-kit-pkg/scripts/build_deb.py \
+          python3 sil-kit-pkg/scripts/silkit_linux_packaging.py \
             --build-cfg $PKG_WORKDIR/build_cfg.json \
             --verbose
 
