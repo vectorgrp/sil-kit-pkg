@@ -15,6 +15,7 @@ from silkit_pkg_utils import BuildInfo, SilKitVersion, SilKitInfo
 from silkit_pkg_utils import set_global_loglevel, get_global_loglevel, get_global_formatting
 from silkit_pkg_interface import SilKitPKG
 from silkit_deb import SilKitDEB
+from silkit_rpm import SilKitRPM
 
 logger = logging.getLogger("SilKit Packaging")
 
@@ -22,6 +23,8 @@ def PkgClassFactory(build_info: BuildInfo) -> SilKitPKG:
 
     if build_info.pkgformat.lower() == "deb":
         return SilKitDEB(build_info)
+    elif build_info.pkgformat.lower() == "rpm":
+        return SilKitRPM(build_info)
     else:
         raise NotImplementedError(f"PKG format {build_info.pkgformat} is not implemented yet!")
 
@@ -199,14 +202,14 @@ def setup(builder: SilKitPKG):
     try:
         builder.setup_build_env()
     except RuntimeError as rte:
-        logger.error(f"SilKitPKG build: {str(rte)}")
+        logger.error(f"SilKitPKG setup error: {str(rte)}")
         die(builder.get_buildinfo(), 64)
 
 def build(builder: SilKitPKG):
     try:
         builder.build()
     except RuntimeError as rte:
-        logger.error(f"SilKitPKG build: {str(rte)}")
+        logger.error(f"SilKitPKG build error: {str(rte)}")
         die(builder.get_buildinfo(), 64)
 
 def main():

@@ -34,3 +34,7 @@ obj-*
 **/*.debhelper
 **/silkit-utils*
 
+**/results_libsilkit*
+
+# Allow section
+!**/libsilkit*.spec
