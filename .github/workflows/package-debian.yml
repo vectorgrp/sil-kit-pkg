@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Job to build debian packages
     container:
-      image: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-20.04:main
+      image: ghcr.io/vectorgrp/sil-kit-docker-build/sil-kit-ci-packaging-ubuntu-20.04:main
     steps:
 
       - name: Checkout (sil-kit-pkg)
@@ -55,9 +55,6 @@ jobs:
           path: sil-kit
           ref: ${{ inputs.silkit_source_ref }}
           github-server-url: https://github.com
-
-      - name: Install build dependencies
-        run: sudo apt install -y debhelper dpkg-dev devscripts dh-make zip
 
       - name: Install cmake
         run: |
@@ -82,9 +79,10 @@ jobs:
                   "version": {
                       "major": 4,
                       "minor": 0,
-                      "patch": 53,
-                      "suffix": "rc-1"
+                      "patch": 54,
+                      "suffix": "-1"
                   },
+                  "pkgformat": "deb",
                   "work_dir": "${{ env.PKG_WORKDIR }}",
                   "keep_temp": true,
                   "output_dir": "${{ env.PKG_OUTDIR }}",
