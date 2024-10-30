@@ -89,13 +89,13 @@ class SilKitRPM(SilKitPKG):
 
     def build(self):
 
-        fedpkg_cmd = ["fedpkg", f"--release={self.build_info.platform}", "mockbuild"]
+        fedpkg_cmd = ["fedpkg", f"--release={self.build_info.platform}", "mockbuild", "--", "--config-opts=print_main_output=True"]
         # If we have '' empty strings in the command list, strange things happen in
         # exec land
         fedpkg_cmd = list(filter(lambda arg: arg != "", fedpkg_cmd))
 
         logger.debug(f"Calling {' '.join(fedpkg_cmd)}")
-        subprocess.run(fedpkg_cmd, check=True, cwd=self.build_info.work_dir)
+        subprocess.run(fedpkg_cmd, check=True, cwd=self.build_info.work_dir, stderr=subprocess.STDOUT)
 
     def __check_spec_file(self):
         spec_dir = self.build_info.silkit_pkg_path / "rpm"
@@ -120,7 +120,7 @@ class SilKitRPM(SilKitPKG):
                 [
                     "tar",
                     "--exclude=.git",
-                    "-czvf",
+                    "-czf",
                     tarball_name,
                     self.build_info.silkit_info.silkit_source_path.name,
                 ],
