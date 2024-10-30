@@ -1,4 +1,4 @@
-name: "Ubuntu Packaging Workflow"
+name: "SilKit Packaging Workflow"
 on:
   workflow_dispatch:
     inputs:
@@ -30,16 +30,17 @@ on:
         type: string
 
 env:
-  ARTIFACT_NAME: silkit-ubuntu-20.04-deb
   PKG_WORKDIR: _i
   PKG_OUTDIR:  _o
 
 jobs:
-  package_debian:
+  package_ubuntu:
     runs-on: ubuntu-latest
-    name: Job to build debian packages
+    name: Job to build .deb for Ubuntu 20.04+ packages
     container:
       image: ghcr.io/vectorgrp/sil-kit-docker-build/sil-kit-ci-packaging-ubuntu-20.04:main
+    env:
+      ARTIFACT_NAME: silkit-ubuntu-20.04-deb
     steps:
 
       - name: Checkout (sil-kit-pkg)
@@ -125,6 +126,109 @@ jobs:
           cd $PKG_OUTDIR
           zip -j ${{ env.ARTIFACT_NAME }}.zip ./*.dsc ./*.build* ./*.changes ./*.*deb
           sha256sum ./${{ env.ARTIFACT_NAME }}.zip > ./SHA256
+
+      - name: Create git tag
+        if: inputs.silkit_pkg_ref != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: 'refs/tags/${{ inputs.silkit_pkg_ref }}',
+                sha: context.sha,
+              })
+            } catch(error) {
+              core.warning("Could not create the specified ref, continuing without it!")
+            }
+
+      - name: Release artifact
+        if: inputs.silkit_pkg_ref != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: ${{ contains(inputs.silkit_pkg_ref, '-rc') }}
+          draft: false
+          tag_name: ${{ inputs.silkit_pkg_ref }}
+          name: ${{ inputs.silkit_pkg_ref }}
+          files: |
+            ${{ env.PKG_OUTDIR }}/${{ env.ARTIFACT_NAME }}.zip
+            ${{ env.PKG_OUTDIR }}/SHA256
+
+  package_almalinux:
+    runs-on: ubuntu-latest
+    name: Job to build Alma Linux 9 packages
+    container:
+      image: ghcr.io/vectorgrp/sil-kit-docker-build/sil-kit-ci-packaging-fedora-40:main
+      options: --privileged
+    env:
+      ARTIFACT_NAME: silkit-almalinux-9-rpm
+    steps:
+
+      - name: Checkout (sil-kit-pkg)
+        uses: actions/checkout@v4
+        with:
+          path: sil-kit-pkg
+
+      - name: Checkout (sil-kit)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.silkit_source_repo }}
+          submodules: recursive
+          path: libsilkit4-4.0.54
+          ref: ${{ inputs.silkit_source_ref }}
+          github-server-url: https://github.com
+
+      - name: Build
+        id: build
+        env:
+          CI_RUN: "1"
+          BUILD_SETTINGS: |
+              {
+
+                  "SilKitInfo": {
+                      "url": "libsilkit4-4.0.54",
+                      "ref": "",
+                      "recursive": true,
+                      "is_local": true
+                  },
+                  "package_repo_path": "sil-kit-pkg",
+                  "version": {
+                      "major": 4,
+                      "minor": 0,
+                      "patch": 54,
+                      "suffix": ""
+                  },
+                  "pkgformat": "rpm",
+                  "work_dir": "${{ env.PKG_WORKDIR }}",
+                  "keep_temp": true,
+                  "output_dir": "${{ env.PKG_OUTDIR }}",
+                  "platform": "epel9"
+              }
+
+        run: |
+          mkdir -p $PKG_WORKDIR
+          mkdir -p $PKG_OUTDIR
+          touch $PKG_WORKDIR/build_cfg.json
+          printf %s $BUILD_SETTINGS  > $PKG_WORKDIR/build_cfg.json
+          python3 sil-kit-pkg/scripts/silkit_linux_packaging.py \
+            --build-cfg $PKG_WORKDIR/build_cfg.json \
+            --verbose
+
+      - name: Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: |
+            ./${{ env.PKG_OUTDIR }}/*.rpm
+          retention-days: 1
+
+      - name: Prepare artifact
+        if: inputs.silkit_pkg_ref != ''
+        run: |
+          cd $PKG_OUTDIR
+          zip -j ${{ env.ARTIFACT_NAME }}-el9.zip ./*.rpm
+          sha256sum ./${{ env.ARTIFACT_NAME }}-el9.zip > ./SHA256
 
       - name: Create git tag
         if: inputs.silkit_pkg_ref != ''
