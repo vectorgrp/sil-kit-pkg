@@ -102,12 +102,13 @@ jobs:
       - name: Test Package
         id: test
         env:
-          DEB_DIR: ./${{ env.PKG_OUTDIR }}
-          PKG_DIR: ./sil-kit-pkg/
+          PKG_DIR: ./${{ env.PKG_OUTDIR }}
+          TEST_DIR: ./sil-kit-pkg/tests/
         run: |
           python3 sil-kit-pkg/tests/test_deb.py \
-          --deb-directory "$DEB_DIR" \
-          --package-directory "$PKG_DIR"
+          --package-directory "$PKG_DIR" \
+          --test-directory "$TEST_DIR" \
+          --distro ubuntu
 
       - name: Artifact
         uses: actions/upload-artifact@v4
@@ -214,6 +215,18 @@ jobs:
           python3 sil-kit-pkg/scripts/silkit_linux_packaging.py \
             --build-cfg $PKG_WORKDIR/build_cfg.json \
             --verbose
+
+      - name: Test Package
+        id: test
+        env:
+          PKG_DIR: ./${{ env.PKG_OUTDIR }}
+          TEST_DIR: ./sil-kit-pkg/tests
+        run: |
+          dnf install -y cmake clang ninja-build
+          python3 sil-kit-pkg/tests/test_deb.py \
+          --package-directory "$PKG_DIR" \
+          --test-directory "$TEST_DIR" \
+          --distro fedora
 
       - name: Artifact
         uses: actions/upload-artifact@v4
