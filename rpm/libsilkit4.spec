@@ -73,5 +73,14 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 
 %changelog
 
-* Tue Oct 29 2024 Jan Kraemer <jan.kraemer@vector.com> - 4.0.54-1
-- Initial Release
+* Mon Nov 11 2024 Jan Kraemer <jan.kraemer@vector.com> - 4.0.54-1
+- Override the labels of DataPublisher, DataSubscriber,
+  RpcClient, and RpcServer instances through the participant
+  configuration, extending the already possible override of the topic /
+  function name.
+- Changed log messages for controller and participant creation, message
+  tracing, system state tracker and time sync service
+- Revised the documentation (demos, troubleshooting, doxygen output, file
+  structure)
+- Improved platform/compiler/architecture detection
+- Failure to configure and package cross-builds to QNX on Windows
