@@ -7,12 +7,12 @@ on:
         required: true
         type: string
       silkit_source_ref:
-        description: 'Commit ref of the repo with the SIL Kit packaging sources. Choose carefully'
+        description: 'Ref of the SIL Kit sources repo.'
         required: false
         type: string
         default: 'main'
       silkit_pkg_ref:
-        description: 'sil-kit-pkg ref used/created for a release'
+        description: 'sil-kit-pkg ref. Creates a release if not empty'
         required: false
         type: string
       debian_fullname:
@@ -41,6 +41,7 @@ jobs:
       image: ghcr.io/vectorgrp/sil-kit-docker-build/sil-kit-ci-packaging-ubuntu-20.04:main
     env:
       ARTIFACT_NAME: silkit-ubuntu-20.04-deb
+
     steps:
 
       - name: Checkout (sil-kit-pkg)
@@ -111,6 +112,7 @@ jobs:
           --distro ubuntu
 
       - name: Artifact
+        id: artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
@@ -121,40 +123,6 @@ jobs:
             ./${{ env.PKG_OUTDIR }}/*.*deb
           retention-days: 1
 
-      - name: Prepare artifact
-        if: inputs.silkit_pkg_ref != ''
-        run: |
-          cd $PKG_OUTDIR
-          zip -j ${{ env.ARTIFACT_NAME }}.zip ./*.dsc ./*.build* ./*.changes ./*.*deb
-          sha256sum ./${{ env.ARTIFACT_NAME }}.zip > ./SHA256
-
-      - name: Create git tag
-        if: inputs.silkit_pkg_ref != ''
-        uses: actions/github-script@v7
-        with:
-          script: |
-            try {
-              await github.rest.git.createRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: 'refs/tags/${{ inputs.silkit_pkg_ref }}',
-                sha: context.sha,
-              })
-            } catch(error) {
-              core.warning("Could not create the specified ref, continuing without it!")
-            }
-
-      - name: Release artifact
-        if: inputs.silkit_pkg_ref != ''
-        uses: softprops/action-gh-release@v2
-        with:
-          prerelease: ${{ contains(inputs.silkit_pkg_ref, '-rc') }}
-          draft: false
-          tag_name: ${{ inputs.silkit_pkg_ref }}
-          name: ${{ inputs.silkit_pkg_ref }}
-          files: |
-            ${{ env.PKG_OUTDIR }}/${{ env.ARTIFACT_NAME }}.zip
-            ${{ env.PKG_OUTDIR }}/SHA256
 
   package_almalinux:
     runs-on: ubuntu-latest
@@ -164,6 +132,7 @@ jobs:
       options: --privileged
     env:
       ARTIFACT_NAME: silkit-almalinux-9-rpm
+
     steps:
 
       - name: Checkout (sil-kit-pkg)
@@ -229,6 +198,7 @@ jobs:
           --distro fedora
 
       - name: Artifact
+        id: artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
@@ -236,12 +206,23 @@ jobs:
             ./${{ env.PKG_OUTDIR }}/*.rpm
           retention-days: 1
 
+
+  make-release:
+    runs-on: ubuntu-latest
+    needs: [package_ubuntu, package_almalinux]
+    permissions:
+      contents: write
+
+    steps:
+
+      - name: download_artifact
+        uses: actions/download-artifact@v4
+
       - name: Prepare artifact
         if: inputs.silkit_pkg_ref != ''
         run: |
-          cd $PKG_OUTDIR
-          zip -j ${{ env.ARTIFACT_NAME }}-el9.zip ./*.rpm
-          sha256sum ./${{ env.ARTIFACT_NAME }}-el9.zip > ./SHA256
+          sha256sum silkit-almalinux-9-rpm/* >> ./SHA256
+          sha256sum silkit-ubuntu-20.04-deb/* >> ./SHA256
 
       - name: Create git tag
         if: inputs.silkit_pkg_ref != ''
@@ -259,6 +240,7 @@ jobs:
               core.warning("Could not create the specified ref, continuing without it!")
             }
 
+
       - name: Release artifact
         if: inputs.silkit_pkg_ref != ''
         uses: softprops/action-gh-release@v2
@@ -268,6 +250,6 @@ jobs:
           tag_name: ${{ inputs.silkit_pkg_ref }}
           name: ${{ inputs.silkit_pkg_ref }}
           files: |
-            ${{ env.PKG_OUTDIR }}/${{ env.ARTIFACT_NAME }}.zip
-            ${{ env.PKG_OUTDIR }}/SHA256
-
+            ${{ github.workspace }}/silkit-ubuntu-20.04-deb/*
+            ${{ github.workspace }}/silkit-almalinux-9-rpm/*
+            ${{ github.workspace }}/SHA256
