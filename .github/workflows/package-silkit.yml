@@ -35,6 +35,8 @@ env:
 
 jobs:
   package_ubuntu:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     name: Job to build .deb for Ubuntu 20.04+ packages
     container:
@@ -155,6 +157,7 @@ jobs:
           files: |
             ${{ env.PKG_OUTDIR }}/${{ env.ARTIFACT_NAME }}.zip
             ${{ env.PKG_OUTDIR }}/SHA256
+        
 
   package_almalinux:
     runs-on: ubuntu-latest
@@ -164,6 +167,8 @@ jobs:
       options: --privileged
     env:
       ARTIFACT_NAME: silkit-almalinux-9-rpm
+    permissions:
+      contents: write
     steps:
 
       - name: Checkout (sil-kit-pkg)
