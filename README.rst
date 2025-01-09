@@ -12,51 +12,155 @@ typical **SEMVER** ``$MAJOR.$MINOR.$REVISION`` placeholder. Placeholderception i
 
 Packages
 ---------
-To build the libsilkit4 package, you will need the debhelper and debhelper-cmake tools:
+To build the libsilkit4 package, the following package related tools are needed:
+
+Ubuntu:
 
 * debhelper
 * devscripts
 * dh-cmake
+* python 3
+
+Fedora:
+
+* fedora-packager tools (installs rpm-build, fedpkg, mock and more tools)
+* fedora-review
 
 To build sil-kit itself, you will need the following packages:
 
 * cmake
 * ninja-build
+* clang/llvm
 
 Install these packages via::
 
-    > sudo apt install debhelper dpkg-dev devscripts dh-make cmake ninja-build
+    # Debian/Ubuntu
+    > sudo apt install debhelper dpkg-dev devscripts dh-make cmake ninja-build clang python3
+    # Fedora/RHEL
+    > sudo dnf install fedora-packager fedora-review cmake ninja-build clang python3
+
+Currently we support building the packages on the following platforms:
+
+* Ubuntu
+    * 20.04
+    * 22.04
+    * 24.04
+* Fedora
+    * 40+
 
 Setting up the build environment
 ================================
 
-sil-kit-pkg is setup to work with Github Actions out of the box. But since the main workhorse of the Workflow is the `build_deb.sh` shellscript, which you can find in ``.github/actions/build_deb.sh``, you can also build it locally yourself!
-The ``build_deb.sh`` uses environment variables for its setup. These environment variable map to parameters that you can set in the github action.
+sil-kit-pkg is setup to work with Github Actions out of the box. But since the main workhorse of the Workflow is the ``silkit_linux_packaging.py`` shellscript, which you can find in ``scripts/silkit_linux_packaging.py``, you can also build it locally yourself!
 
-The following environment variables need to be set
+The Config
+----------
+The ``silkit_linux_packaging.py`` script uses a JSON config for its setup. These config options map to parameters that you can set in the github action.
 
-SILKIT_SOURCE_URL: Points to the SIL Kit sources::
+Let's examine an example config to build a SIL Kit package: ::
 
-    export SILKIT_SOURCE_URL=https://github.com/vectorgrp/sil-kit
+    {
 
-SILKIT_PKG_URL: URL to the sil-kit-pkg sources::
+        "SilKitInfo": {
+              "url": "https://github.com/vectorgrp/sil-kit.git",
+              "ref": "v4.0.54",
+              "recursive": true,
+              "is_local": false
+        },
+        "package_repo_path": "sil-kit-pkg",
+        "version": {
+              "major": 4,
+              "minor": 0,
+              "patch": 54,
+              "suffix": ""
+        },
+        "pkgformat": "deb",
+        "work_dir": "./workdir",
+        "keep_temp": true,
+        "output_dir": "./out",
+        "platform": "Ubuntu-22.04"
+    }
 
-    export SILKIT_PKG_URL=/path/to/sil-kit-pkg  # To use a local sil-kit-pkg
-    export SILKIT_PKG_URL=https://git.repo.com/your-sil-kit-pkg.git # Use a specific sil-kit-pkg git repo
 
-DEBFULLNAME: Name of the package maintainer/creator::
+
+* SilKitInfo
+    * General information about the silkit sources
+
+* url
+    * The url to get the SIL Kit sources. can be a git URL or a local path. In our case we are fetching the sources directly from the upstream Github repo.
+
+* ref
+    * The git ref to be fetched, can be a branch or a tag or an actual commit id. In our case we are fetching the tag for version 4.0.54
+    * only when using a git url
+
+* recursive
+    * Does a recursive clone with all submodules included
+    * Only when using a git url
+
+* is_local
+    * Set to true when using a local path in the url field
+
+* package_repo_path
+    * The path to this (sil-kit-pkg) repo. Can be an absolute path or a path relative to from where you execute the ``silkit_linux_packaging.py`` script.
+
+* version
+    * The version of the SIL Kit package to be build
+* major
+    * The major version of the package
+* minor
+    * The minor version of the package
+* patch
+    * The patch version of the package
+* suffix
+    * Additional version suffix of the package
+
+* pkgformat
+    * Determines the package type to build. ``deb`` for Debian/Ubuntu builds. ``rpm`` for RedHat/Fedora builds.
+* work_dir
+    * The directory where the build is happening
+* keep_temp
+    * Keeps the working dir after finishing the build. Useful to debug build errors.
+* outpur_dir
+    * The directory where the (local) artifacts are copied to.
+* platform
+    * The platform to build for
+    * Possible values are
+        * Ubuntu-20.04
+        * Ubuntu-22.04
+        * Ubuntu-24.04
+        * epel8
+        * epel9
+        * fc40
+
+Fedora Extra Packages for Enterprise Linux
+-------------------------------------------
+When build for the EPEL (Extra Packages for Enterprise Linux) Repos, you need to create a symlink to the correct ``mock`` config, since ``epel-x`` is not the name of a valid config. The official SIL Kit RPM packages are built for ALMA Linux 9, so we can use the ALMA 9 config like this:
+
+.. code-block:: shell
+
+    mkdir -p ~/.config/mock
+    ln -sf /etc/mock/alma+epel-9-x86_64.cfg ~/.config/mock/epel-9-x86_64.cfg
+
+Mock will automatically look in the ``~/.config/mock/`` dir for a valid config with the platform name we provide. Creating a symlink with that name to the existing ALMA 9 config will provide this.
+
+Additionally, you need to add your user to the ``mock`` group:
+
+.. code-block:: shell
+
+    # If the group does not already exist
+    sudo groupadd mock
+    # Adding your $USER
+    sudo usermod -aG mock $USER
+
+DEBIAN environment variables
+----------------------------
+
+Debian requires the Maintainer environment variables to be set correctly:
+
+.. code-block:: shell
 
     export DEBFULLNAME="Awesome Dev"
-
-DEBEMAIL: Email of the package maintainer/creator::
-
-    export DEBEMAIL=awesome_dev@your-domain.something
-
-SILKIT_VENDORED_PACKAGES: Instructs the build script to use the vendored 3rd party libraries
-
-    export SILKIT_VENDORED_PACKAGES
-
-These environment variables also map to Github Actions input parameters.
+    export DEBEMAIL="awesome_dev@your-domain.something"
 
 Additional Parameters for the CI
 ================================
@@ -73,44 +177,25 @@ Building the package
 Locally
 -------
 
-Some further prerequisites:
-
-* We build the package directly in the sil-kit-pkg directory.
-    You can copy the script to anywhere on your system, just adapt **SILKIT_PKG_URL** accordingly
-* sil-kit-pkg is versioned akine to sil-kit, e.g. sil-kit-pkg version 4.0.44 will ONLY build sil-kit 4.0.44
-    This is due to strict (and correct) version handling for Debian packages
-    They will always be versioned and the intent is to only built correct versioned packages and it should not be possible to build version 4.0.32 and pretend it is 4.0.44 in the Debian package.
-    So if you want to build **sil-kit** version X.Y.Z you need to checkout the vX.Y.Z tag of **sil-kit-pkg**.
-
 Setting up the environment
 **************************
 
-.. code-block:: shell
-    cd /path/to/sil-kit-pkg
-    export SILKIT_SOURCE_URL=https://github.com/vectorgrp/sil-kit.git # The original SIL Kit repo
-    export SILKIT_PKG_URL=. # The directory where our **debian** directory lives
-    export DEBFULLNAME="awesome.dev@some-mail-provider.com
+Create the JSON config file according to `The Config`_.
+If you build the package under Debian/Ubuntu, set the appropriate environment variables.
 
 Building the package
 ********************
-The `build_deb.sh` script can be used to build the SilKit package. It takes the current Ubuntu release version as an optional argument. E.g. to run it on Ubuntu 22.04 use:
+Let's go through an exemplary build using the ``silkit_linux_packaging.py`` script. You can use the `The Config`_ config as a starter template.
+We assume that you have checked out the ``sil-kit-pkg`` repo at ``~/workspace/sil-kit-pkg``. Choose ``~/workspace/workdir`` as the ``work_dir`` value and ``~/workspace/out`` as the ``output_dir``.
+If you build for Fedora, change the ``pkgformat`` to ``rpm`` and choose the platform according to your current Fedora release e.g. ``f40`` for Fedora 40. You can get a list of all availbale platforms via ``fedpkg releases-info``. Don't forget to symlink the correct config if you are building an ``epel`` package.
+
+The rest of the config can use the template values. Then all you need to run is:
+
 .. code-block:: shell
-    ./.github/actions/build_deb.sh 22.04
 
-2-5 minutes later a freshly build  will be available in your working directory.
-The script should create the following files:
+    python3 sil-kit-pkg/scripts/silkit_linux_packaging.py --build-cfg ./my_config.json
 
-* libsilkit-dev_$VERSION_amd64.deb
-* libsilkit4-dbgsym_$VERSION_amd64.ddeb
-* libsilkit4_4.$VERSION_amd64.deb
-* libsilkit_$VERSION.debian.tar.xz
-* libsilkit_$VERSION.dsc
-* libsilkit_$VERSION_amd64.build
-* libsilkit_$VERSION_amd64.buildinfo
-* libsilkit_$VERSION_amd64.changes
-* silkit-utils-dbgsym_$VERSION_amd64.ddeb
-* silkit-utils_$VERSION_amd64.deb
-
+2-5 minutes later a freshl build will be available in your designated output directory.
 
 Github CI
 ---------
@@ -121,15 +206,24 @@ How to get to the Action
 ************************
 
 * Click on the ``Actions`` tab in your Github repo
-* Click on the ``.github/workflows/package-debian.yml`` tab
+* Click on the ``Silkit Packaging Workflow`` tab
 * Click on the ``Run Workflow`` tab
 
 Setup for the Workflow
 **********************
 
-See `Setting up the environment`_. Additionally set the following variables:
+* SIL Kit Repository URL
+  Set to the sil-kit github repo
+* SIL Kit Source Repo ref
+  Set to the branch/tag/commit id of the sil-kit repo you want to use
+* sil-kit-pkg ref
+  If you want to build a release you can set the this to a release tag
+* Maintainer name (only used on Debian/Ubuntu)
+  Name of the maintainer creating the package
+* Maintainer email (only used on Debian/Ubuntu)
+  Email of the maintainer creating the package
 
 * DEBIAN_ARCH
     amd64
 
-Click the ``Run Workflow`` Button. The `.deb` packages will be in the artifacts of this Workflow run.
+Click the ``Run Workflow`` Button. Packages for Ubuntu 20.04 and Alma Linux 9 will be in the artifacts of this Workflow run.
