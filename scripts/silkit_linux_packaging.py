@@ -185,7 +185,7 @@ def create_work_directory(build_info: BuildInfo) -> Path:
     logger.debug(f"Creating {work_dir} work dir!")
 
     try:
-        Path.mkdir(work_dir, exist_ok=True)
+        Path.mkdir(work_dir, mode=0o766, exist_ok=True)
     except Exception as ex:
         logger.error(f"While creating the workdir an error occured: {str(ex)}")
         # No need for cleanup, nothing of value created yet
