@@ -181,6 +181,7 @@ jobs:
           mkdir -p $PKG_OUTDIR
           touch $PKG_WORKDIR/build_cfg.json
           printf %s $BUILD_SETTINGS  > $PKG_WORKDIR/build_cfg.json
+          usermod -a -G mock root
           python3 sil-kit-pkg/scripts/silkit_linux_packaging.py \
             --build-cfg $PKG_WORKDIR/build_cfg.json \
             --verbose
