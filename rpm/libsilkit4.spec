@@ -37,6 +37,7 @@ Utility programs for libsilkit. Includes
 %global toolchain clang
 %define __builder ninja
 %cmake  -DSILKIT_INSTALL_SOURCE=Off -DSILKIT_BUILD_LINUX_PACKAGE=On \\\
+        -DSILKIT_BUILD_DEMOS=Off \\\
         -S . \\\
         -GNinja \\\
         -DCMAKE_EXE_LINKER_FLAGS="${CMAKE_EXE_LINKER_FLAGS} -Wl,--undefined-version -fuse-ld=lld -Wl,--build-id=sha1 -pie" \\\
