@@ -1,5 +1,5 @@
 Name:       libsilkit4
-Version:    4.0.54
+Version:    4.0.55
 Release:    %autorelease
 Summary:    The SIL Framework from Vector
 License:    MIT
@@ -74,6 +74,8 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 
 %changelog
 
+* Wed Jan 29 2025 Jan Kraemer <jan.kraemer@vector.com> - 4.0.55-1
+- New release candidate
 * Mon Nov 11 2024 Jan Kraemer <jan.kraemer@vector.com> - 4.0.54-1
 - Override the labels of DataPublisher, DataSubscriber,
   RpcClient, and RpcServer instances through the participant
