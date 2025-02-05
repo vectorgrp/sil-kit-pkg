@@ -75,7 +75,20 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 %changelog
 
 * Wed Jan 29 2025 Jan Kraemer <jan.kraemer@vector.com> - 4.0.55-1
-- New release candidate
+- SilKit_LinDataLengthUnknown in the C header Lin.h has been turned into
+  a define like all the other constants in the C header files.
+- Aligned C API error return codes SilKit_ReturnCode_XXX and SIL Kit
+  specific exceptions.
+- Demos: Overhauled and restructured most existing demos.
+- Demos: Added SimpleCan and Orchestration demos for basic API usage.
+- Demos: Added sample participant configuration files.
+- Registry: Block all attempts to connect with an already present
+  participant name, not just the first.
+- CMake: When demos are installed into the bin directory under the
+  installation prefix, their RPATH will be set such that they are able to
+  find the libSilKit[d].so.
+- System Monitor: Show all participants, not just the ones that joined
+  during the monitors execution.
 * Mon Nov 11 2024 Jan Kraemer <jan.kraemer@vector.com> - 4.0.54-1
 - Override the labels of DataPublisher, DataSubscriber,
   RpcClient, and RpcServer instances through the participant
