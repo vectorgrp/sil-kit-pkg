@@ -1,5 +1,16 @@
+%define version_major 4
+%define version_minor 0
+%define version_patch 56
+%define version_suffix rc1
+
+%if %{version_suffix} == ""
+%define silkit_version %{version_major}.%{version_minor}.%{version_patch}
+%else
+%define silkit_version %{version_major}.%{version_minor}.%{version_patch}~%{version_suffix}
+%endif
+
 Name:       libsilkit4
-Version:    4.0.55
+Version:    %{silkit_version}
 Release:    %autorelease
 Summary:    The SIL Framework from Vector
 License:    MIT
@@ -57,8 +68,8 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 %ctest
 
 %files
-%{_libdir}/libSilKit.so.%{version}
-%{_libdir}/libSilKit.so.4
+%{_libdir}/libSilKit.so.%{version_major}*
+%{_libdir}/libSilKit.so.
 
 %files devel
 %{_libdir}/libSilKit.so
@@ -74,6 +85,8 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 
 %changelog
 
+* Fri Feb 07 2025 Jan Kraemer <jan.kraemer@vector.com> - 4.0.56~rc1
+- New pre release
 * Wed Jan 29 2025 Jan Kraemer <jan.kraemer@vector.com> - 4.0.55-1
 - SilKit_LinDataLengthUnknown in the C header Lin.h has been turned into
   a define like all the other constants in the C header files.
