@@ -1,4 +1,10 @@
-libsilkit (4.0.55-1ubuntu1) UNRELEASED; urgency=medium
+libsilkit (4.0.56~rc1-1ubuntu1) UNRELEASED; urgency=medium
+
+  * New Prerelease
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Fri, 07 Feb 2025 09:51:24 +0100
+
+libsilkit (4.0.55-1ubuntu1) stable; urgency=medium
 
   * SilKit_LinDataLengthUnknown in the C header Lin.h has been turned into
     a define like all the other constants in the C header files.

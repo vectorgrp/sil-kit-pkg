@@ -4,11 +4,11 @@ Upstream-Contact: jan.kraemer@vector.com
 Source: https://www.github.com/vectorgrp/sil-kit
 
 Files: *
-Copyright: 2024 Vector Informatik GmbH
+Copyright: 2025 Vector Informatik GmbH
 License: Expat
 
 Files: debian/*
-Copyright: 2024 Vector Informatik GmbH
+Copyright: 2025 Vector Informatik GmbH
 License: Expat
 
 Files: ThirdParty/googletest/*
