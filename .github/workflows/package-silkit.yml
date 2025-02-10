@@ -81,8 +81,8 @@ jobs:
                   "version": {
                       "major": 4,
                       "minor": 0,
-                      "patch": 55,
-                      "suffix": ""
+                      "patch": 56,
+                      "suffix": "rc1"
                   },
                   "pkgformat": "deb",
                   "work_dir": "${{ env.PKG_WORKDIR }}",
@@ -145,7 +145,7 @@ jobs:
         with:
           repository: ${{ inputs.silkit_source_repo }}
           submodules: recursive
-          path: libsilkit4-4.0.55
+          path: sil-kit
           ref: ${{ inputs.silkit_source_ref }}
           github-server-url: https://github.com
 
@@ -157,7 +157,7 @@ jobs:
               {
 
                   "SilKitInfo": {
-                      "url": "libsilkit4-4.0.55",
+                      "url": "sil-kit",
                       "ref": "",
                       "recursive": true,
                       "is_local": true
@@ -166,8 +166,8 @@ jobs:
                   "version": {
                       "major": 4,
                       "minor": 0,
-                      "patch": 55,
-                      "suffix": ""
+                      "patch": 56,
+                      "suffix": "rc1"
                   },
                   "pkgformat": "rpm",
                   "work_dir": "${{ env.PKG_WORKDIR }}",

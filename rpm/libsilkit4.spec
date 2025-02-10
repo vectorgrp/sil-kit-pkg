@@ -1,5 +1,17 @@
+%define version_major 4
+%define version_minor 0
+%define version_patch 56
+%define version_suffix rc1
+
+
+%if "%{version_suffix}"
+%define silkit_version %{version_major}.%{version_minor}.%{version_patch}~%{version_suffix}
+%else
+%define silkit_version %{version_major}.%{version_minor}.%{version_patch}
+%endif
+
 Name:       libsilkit4
-Version:    4.0.55
+Version:    %{silkit_version}
 Release:    %autorelease
 Summary:    The SIL Framework from Vector
 License:    MIT
@@ -17,12 +29,14 @@ An open-source library for connecting Software-in-the-Loop Environments
 
 %package devel
 Summary: Develop Files for the libsilkit package
+Requires: libsilkit4
 
 %description devel
 The development headers and CMake files for libsilkit
 
 %package utils
 Summary: SilKit Util Binaries
+Requires: libsilkit4
 
 %description utils
 Utility programs for libsilkit. Includes
@@ -57,8 +71,7 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 %ctest
 
 %files
-%{_libdir}/libSilKit.so.%{version}
-%{_libdir}/libSilKit.so.4
+%{_libdir}/libSilKit.so.%{version_major}*
 
 %files devel
 %{_libdir}/libSilKit.so
@@ -74,6 +87,8 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 
 %changelog
 
+* Fri Feb 07 2025 Jan Kraemer <jan.kraemer@vector.com> - 4.0.56~rc1
+- New pre release
 * Wed Jan 29 2025 Jan Kraemer <jan.kraemer@vector.com> - 4.0.55-1
 - SilKit_LinDataLengthUnknown in the C header Lin.h has been turned into
   a define like all the other constants in the C header files.
