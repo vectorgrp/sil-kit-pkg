@@ -49,7 +49,9 @@ class SilKitDEB(SilKitPKG):
         return self.build_info
 
     def source_dir_name(self):
-        return "sil-kit"
+        silkit_version = self.build_info.version
+        source_dir = f"libsilkit{silkit_version.major}-{str(silkit_version)}"
+        return source_dir
 
     def setup_build_env(self):
         try:
@@ -84,10 +86,7 @@ class SilKitDEB(SilKitPKG):
         if silkit_version == None:
             raise RuntimeError("No valid SilKit Version found! Exiting!")
 
-        tarball_name = "libsilkit_{}.{}.{}.orig.tar.gz".format(
-            silkit_version.major, silkit_version.minor, silkit_version.patch
-        )
-
+        tarball_name = f"libsilkit_{str(silkit_version)}.orig.tar.gz"
         try:
             subprocess.run(
                 [
@@ -96,8 +95,8 @@ class SilKitDEB(SilKitPKG):
                     "-czf",
                     self.build_info.work_dir / tarball_name,
                     "-C",
-                    self.build_info.silkit_info.silkit_source_path,
-                    ".",
+                    self.build_info.work_dir,
+                    self.source_dir_name(),
                 ],
                 check=True,
             )
@@ -108,7 +107,7 @@ class SilKitDEB(SilKitPKG):
         try:
             shutil.copytree(
                 self.build_info.silkit_pkg_path.expanduser() / "debian/",
-                self.build_info.work_dir / "sil-kit/debian",
+                self.build_info.work_dir / self.source_dir_name() / "debian",
             )
         except Exception as ex:
             logger.error("Could not copy the debian dir into the sil kit source dir! Exiting")
@@ -153,7 +152,7 @@ class SilKitDEB(SilKitPKG):
 
             logger.debug(f"CMD LIST: {debuild_cmd}")
             logger.debug(f"Calling: {' '.join(debuild_cmd)}")
-            subprocess.run(debuild_cmd, check=True, cwd=self.build_info.work_dir / "sil-kit/")
+            subprocess.run(debuild_cmd, check=True, cwd=self.build_info.work_dir / self.source_dir_name())
         except Exception as ex:
             raise RuntimeError("debuild command failed") from ex
 

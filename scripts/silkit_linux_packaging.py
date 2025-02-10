@@ -145,7 +145,8 @@ def get_silkit_repo(builder: SilKitPKG):
 
         # Copy sil-kit-dir
         try:
-            shutil.copytree(repoPath, build_info.work_dir / repoPath)
+            version = build_info.version
+            shutil.copytree(repoPath, build_info.work_dir / f"libsilkit{version.major}-{str(version)}")
         except Exception as ex:
             logger.error("Could not copy the sil-kit source tree into the workspace dir! Exiting")
             logger.debug(f"Python Exception: {str(ex)}")

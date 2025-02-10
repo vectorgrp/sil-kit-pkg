@@ -75,9 +75,8 @@ class SilKitRPM(SilKitPKG):
 
     def source_dir_name(self):
         silkit_version = self.build_info.version
-        return "libsilkit{}-{}.{}.{}".format(
-            silkit_version.major, silkit_version.major, silkit_version.minor, silkit_version.patch
-        )
+        source_dir = f"libsilkit{silkit_version.major}-{str(silkit_version)}"
+        return source_dir
 
     def setup_build_env(self):
         try:
@@ -112,20 +111,19 @@ class SilKitRPM(SilKitPKG):
         if silkit_version == None:
             raise RuntimeError("No valid SilKit version found!")
 
-        tarball_name = "libsilkit-{}.{}.{}.tar.gz".format(
-            silkit_version.major, silkit_version.minor, silkit_version.patch
-        )
+        tarball_name = f"libsilkit-{str(silkit_version)}.tar.gz"
         try:
             subprocess.run(
                 [
                     "tar",
                     "--exclude=.git",
                     "-czf",
-                    tarball_name,
-                    self.build_info.silkit_info.silkit_source_path.name,
+                    self.build_info.work_dir / tarball_name,
+                    "-C",
+                    self.build_info.work_dir,
+                    self.source_dir_name()
                 ],
                 check=True,
-                cwd=self.build_info.work_dir,
             )
         except Exception as ex:
             raise RuntimeError(f"While creating the Source tarball, an error occured!") from ex
