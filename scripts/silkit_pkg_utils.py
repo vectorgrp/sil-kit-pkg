@@ -18,7 +18,7 @@ class SilKitVersion:
         version_str = f"{self.major}.{self.minor}.{self.patch}"
 
         if self.suffix != None and self.suffix != "":
-            version_str = version_str + f"{self.suffix}"
+            version_str = version_str + f"~{self.suffix}"
 
         return version_str
 
