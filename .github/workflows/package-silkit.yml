@@ -258,6 +258,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run:
+          ls -la ${{ github.workspace }}
+          ls -la ${{ github.workspace }}/silkit-ubuntu-20.04-deb/
           gh release create \
           ${{ steps.git_tag.outputs.git_tag }} \
           silkit-ubuntu-20.04-deb/* \
