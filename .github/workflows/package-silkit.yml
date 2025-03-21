@@ -228,13 +228,13 @@ jobs:
       - name: Prepare GIT tag
         id: git_tag
         run: |
-          echo "git_tag=$(echo ${{ inputs.silkit_pkg_ref }} | sed --expression=\"s/~rc/-rc/g\")" >> $GITHUB_OUTPUT
+          echo 'git_tag=$(echo "${{ inputs.silkit_pkg_ref }}" | sed --expression="s/~rc/-rc/g\")' >> $GITHUB_OUTPUT
           case "${{ inputs.silkit_pkg_ref }}" in
               *rc* )
-                  echo "prerelease=\"--prerelease\"" >> $GITHUB_OUTPUT
+                  echo 'prerelease=--prerelease' >> $GITHUB_OUTPUT
                   ;;
               *)
-                  echo "prerelease=\"\"" >> $GITHUB_OUTPUT
+                  echo 'prerelease=""' >> $GITHUB_OUTPUT
                   ;;
               ecase
 
