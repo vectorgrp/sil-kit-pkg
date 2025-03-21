@@ -228,7 +228,7 @@ jobs:
       - name: Prepare GIT tag
         id: git_tag
         run: |
-          echo "git_tag=$(echo \"${{ inputs.silkit_pkg_ref }}\" | sed --expression=\"s/~rc/-rc/g\")" >> $GITHUB_OUTPUT
+          echo "git_tag=$(echo ${{ inputs.silkit_pkg_ref }} | sed --expression=\"s/~rc/-rc/g\")" >> $GITHUB_OUTPUT
           case "${{ inputs.silkit_pkg_ref }}" in
               *rc* )
                   echo 'prerelease=--prerelease' >> $GITHUB_OUTPUT
@@ -255,6 +255,8 @@ jobs:
 
 
       - name: Release artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
         run:
           gh release create \
           ${{ steps.git_tag.outputs.git_tag }} \
