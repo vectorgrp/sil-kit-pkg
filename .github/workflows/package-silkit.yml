@@ -236,7 +236,7 @@ jobs:
               *)
                   echo 'prerelease=""' >> $GITHUB_OUTPUT
                   ;;
-          ecase
+          esac
 
       - name: Create git tag
         uses: actions/github-script@v7
