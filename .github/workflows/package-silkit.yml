@@ -260,9 +260,9 @@ jobs:
         run:
           gh release create \
           ${{ steps.git_tag.outputs.git_tag }} \
-          ${{ github.workspace }}/silkit-ubuntu-20.04-deb/* \
-          ${{ github.workspace }}/silkit-almalinux-9-rpm/* \
-          ${{ github.workspace }}/SHA256 \
+          silkit-ubuntu-20.04-deb/* \
+          silkit-almalinux-9-rpm/* \
+          SHA256 \
           --verify-tag \
           ${{ steps.git_tag.outputs.prerelease }} \
           --title "${{ inputs.silkit_pkg_ref }}" \
