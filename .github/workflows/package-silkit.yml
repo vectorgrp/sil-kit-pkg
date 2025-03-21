@@ -228,8 +228,15 @@ jobs:
       - name: Prepare GIT tag
         id: git_tag
         run: |
-          echo "git_tag=$(echo {{ inputs.silkit_pkg_ref }} | sed --expression=\"s/~rc/-rc/g\")" >> $GITHUB_OUTPUT
-
+          echo "git_tag=$(echo ${{ inputs.silkit_pkg_ref }} | sed --expression=\"s/~rc/-rc/g\")" >> $GITHUB_OUTPUT
+          case "${{ inputs.silkit_pkg_ref }}" in
+              *rc* )
+                  echo "prerelease=\"--prerelease\"" >> $GITHUB_OUTPUT
+                  ;;
+              *)
+                  echo "prerelease=\"\"" >> $GITHUB_OUTPUT
+                  ;;
+              ecase
 
       - name: Create git tag
         uses: actions/github-script@v7
@@ -255,5 +262,6 @@ jobs:
           ${{ github.workspace }}/silkit-almalinux-9-rpm/* \
           ${{ github.workspace }}/SHA256 \
           --verify-tag \
+          ${{ steps.git_tag.outputs.prerelease }} \
           --title "${{ inputs.silkit_pkg_ref }}" \
           --notes "New Ubuntu and Fedora Packages for SIL Kit ${{ steps.git_tag.outputs.git_tag }}"
