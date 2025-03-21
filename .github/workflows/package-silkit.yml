@@ -214,6 +214,7 @@ jobs:
   make-release:
     runs-on: ubuntu-latest
     needs: [package_ubuntu, package_almalinux]
+    if: inputs.silkit_pkg_ref != ''
     permissions:
       contents: write
 
@@ -223,13 +224,26 @@ jobs:
         uses: actions/download-artifact@v4
 
       - name: Prepare artifact
-        if: inputs.silkit_pkg_ref != ''
         run: |
           sha256sum silkit-almalinux-9-rpm/* >> ./SHA256
           sha256sum silkit-ubuntu-20.04-deb/* >> ./SHA256
 
+      - name: Prepare GIT tag
+        id: git_tag
+        run: |
+          echo ${{ inputs.silkit_pkg_ref }}
+          echo ${{ inputs.silkit_pkg_ref }} | sed --expression="s/~rc/-rc/g"
+          echo "git_tag=$(echo ${{ inputs.silkit_pkg_ref }} | sed --expression="s/~rc/-rc/g")" >> $GITHUB_OUTPUT
+          case "${{ inputs.silkit_pkg_ref }}" in
+              *rc* )
+                  echo 'prerelease=--prerelease' >> $GITHUB_OUTPUT
+                  ;;
+              *)
+                  echo 'prerelease=""' >> $GITHUB_OUTPUT
+                  ;;
+          esac
+
       - name: Create git tag
-        if: inputs.silkit_pkg_ref != ''
         uses: actions/github-script@v7
         with:
           script: |
@@ -237,7 +251,7 @@ jobs:
               await github.rest.git.createRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: 'refs/tags/${{ inputs.silkit_pkg_ref }}',
+                ref: 'refs/tags/${{ steps.git_tag.outputs.git_tag }}',
                 sha: context.sha,
               })
             } catch(error) {
@@ -246,14 +260,17 @@ jobs:
 
 
       - name: Release artifact
-        if: inputs.silkit_pkg_ref != ''
-        uses: softprops/action-gh-release@v2
-        with:
-          prerelease: ${{ contains(inputs.silkit_pkg_ref, '-rc') }}
-          draft: false
-          tag_name: ${{ inputs.silkit_pkg_ref }}
-          name: ${{ inputs.silkit_pkg_ref }}
-          files: |
-            ${{ github.workspace }}/silkit-ubuntu-20.04-deb/*
-            ${{ github.workspace }}/silkit-almalinux-9-rpm/*
-            ${{ github.workspace }}/SHA256
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo ${{ steps.git_tag.outputs.git_tag }}
+          gh release create \
+          ${{ steps.git_tag.outputs.git_tag }} \
+          ${{ github.workspace }}/silkit-ubuntu-20.04-deb/* \
+          ${{ github.workspace }}/silkit-almalinux-9-rpm/* \
+          SHA256 \
+          --verify-tag \
+          ${{ steps.git_tag.outputs.prerelease }} \
+          --repo "${{ github.repository }}" \
+          --title "${{ inputs.silkit_pkg_ref }}" \
+          --notes "Ubuntu and Fedora Packages for SIL Kit ${{ steps.git_tag.outputs.git_tag }}"
