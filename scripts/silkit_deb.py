@@ -176,7 +176,7 @@ class SilKitDEB(SilKitPKG):
             )
         if ubuntu_version == "24.04":
             return BuildFlags(
-                add_platform_flags="",
+                add_platform_flags="-gdwarf-4",
                 add_debuild_flags="",
                 c_compiler="clang",
                 cxx_compiler="clang++",
