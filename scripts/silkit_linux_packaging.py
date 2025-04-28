@@ -11,7 +11,7 @@ from argparse import ArgumentParser
 from dataclasses import dataclass
 from pathlib import Path
 
-from silkit_pkg_utils import BuildInfo, SilKitVersion, SilKitInfo
+from silkit_pkg_utils import BuildInfo, SilKitVersion, SilKitInfo, DebuildInfo
 from silkit_pkg_utils import set_global_loglevel, get_global_loglevel, get_global_formatting
 from silkit_pkg_interface import SilKitPKG
 from silkit_deb import SilKitDEB
@@ -73,6 +73,10 @@ def generate_buildinfo(cfg) -> BuildInfo:
             patch=cfg["version"]["patch"],
             suffix=cfg["version"]["suffix"])
 
+    debuild_info = DebuildInfo(
+            args=cfg.get("debuild", {}).get("args", []),
+    )
+
     build_info = BuildInfo(
             silkit_pkg_path=Path(cfg["package_repo_path"]),
             silkit_info=silkit_info,
@@ -81,8 +85,10 @@ def generate_buildinfo(cfg) -> BuildInfo:
             work_dir=Path(cfg["work_dir"]),
             keep_temp=cfg["keep_temp"],
             output_dir=Path(cfg["output_dir"]),
-            platform=cfg["platform"]
+            platform=cfg["platform"],
+            debuild=debuild_info,
     )
+
     logger.debug(f"build_info: {build_info}")
     return build_info
 

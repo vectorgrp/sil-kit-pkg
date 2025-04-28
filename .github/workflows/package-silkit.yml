@@ -88,7 +88,10 @@ jobs:
                   "work_dir": "${{ env.PKG_WORKDIR }}",
                   "keep_temp": true,
                   "output_dir": "${{ env.PKG_OUTDIR }}",
-                  "platform": "Ubuntu-20.04"
+                  "platform": "Ubuntu-20.04",
+                  "debuild": {
+                      "args": ["-d", "--prepend-path=/opt/vector/bin"],
+                  }
               }
 
         run: |

@@ -2,6 +2,7 @@ import logging
 import shutil
 import subprocess
 import re
+import os
 
 from pathlib import Path
 
@@ -129,7 +130,8 @@ class SilKitDEB(SilKitPKG):
                 else ""
             )
 
-            debuild_flags = build_flags.add_debuild_flags.split(" ")
+            debuild_flags = [*build_flags.add_debuild_flags, *self.build_info.debuild.args]
+
             logger.debug(f"Additional debuild flags: {debuild_flags}")
             debuild_cmd = (
                 ["debuild"]
@@ -158,28 +160,33 @@ class SilKitDEB(SilKitPKG):
 
     @staticmethod
     def __get_debian_build_flags(ubuntu_version: str) -> BuildFlags:
-
         logger.info(f"Building for platform: {ubuntu_version}")
+
+        def env_or(name, default):
+            return os.environ.get(name, default)
+
         if ubuntu_version == "20.04":
             return BuildFlags(
-                add_platform_flags="",
-                add_debuild_flags="-d --prepend-path=/opt/vector/bin",
-                c_compiler="clang-10",
-                cxx_compiler="clang++-10",
+                add_platform_flags="-gdwarf-4",
+                add_debuild_flags=[],
+                c_compiler=env_or("CC", "clang"),
+                cxx_compiler=env_or("CXX", "clang++"),
             )
+
         if ubuntu_version == "22.04":
             return BuildFlags(
                 add_platform_flags="-gdwarf-4",
-                add_debuild_flags="",
-                c_compiler="clang",
-                cxx_compiler="clang++",
+                add_debuild_flags=[],
+                c_compiler=env_or("CC", "clang"),
+                cxx_compiler=env_or("CXX", "clang++"),
             )
+
         if ubuntu_version == "24.04":
             return BuildFlags(
-                add_platform_flags="",
-                add_debuild_flags="",
-                c_compiler="clang",
-                cxx_compiler="clang++",
+                add_platform_flags="-gdwarf-4",
+                add_debuild_flags=[],
+                c_compiler=env_or("CC", "clang"),
+                cxx_compiler=env_or("CXX", "clang++"),
             )
 
         return None
