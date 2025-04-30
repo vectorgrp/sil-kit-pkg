@@ -90,6 +90,8 @@ jobs:
                   "output_dir": "${{ env.PKG_OUTDIR }}",
                   "platform": "Ubuntu-20.04"
               }
+          CC: "clang"
+          CXX: "clang++"
 
         run: |
           mkdir -p $PKG_WORKDIR

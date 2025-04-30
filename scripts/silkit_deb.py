@@ -1,4 +1,5 @@
 import logging
+import os
 import shutil
 import subprocess
 import re
@@ -159,27 +160,35 @@ class SilKitDEB(SilKitPKG):
     @staticmethod
     def __get_debian_build_flags(ubuntu_version: str) -> BuildFlags:
 
-        logger.info(f"Building for platform: {ubuntu_version}")
-        if ubuntu_version == "20.04":
-            return BuildFlags(
-                add_platform_flags="",
-                add_debuild_flags="-d --prepend-path=/opt/vector/bin",
-                c_compiler="clang-10",
-                cxx_compiler="clang++-10",
-            )
-        if ubuntu_version == "22.04":
-            return BuildFlags(
-                add_platform_flags="-gdwarf-4",
-                add_debuild_flags="",
-                c_compiler="clang",
-                cxx_compiler="clang++",
-            )
-        if ubuntu_version == "24.04":
-            return BuildFlags(
-                add_platform_flags="",
-                add_debuild_flags="",
-                c_compiler="clang",
-                cxx_compiler="clang++",
-            )
+        cc = os.environ["CC"]
+        cxx = os.environ["CXX"]
 
-        return None
+        if not cc or not cxx:
+            raise RuntimeError("No CC or CXX environment variable set!")
+
+        if ubuntu_version == "20.04":
+
+            add_platform_flags="",
+            add_debuild_flags="-d --prepend-path=/opt/vector/bin",
+
+        if ubuntu_version == "22.04":
+
+            add_platform_flags="-gdwarf-4",
+            add_debuild_flags="",
+
+        if ubuntu_version == "24.04":
+
+            add_platform_flags=""
+            add_debuild_flags=""
+
+        else:
+
+            raise RuntimeError("No valid Ubuntu version set!")
+
+        logger.info(f"Building for platform: {ubuntu_version}")
+        return BuildFlags(
+                add_platform_flags = add_platform_flags,
+                add_debuild_flags = add_debuild_flags,
+                c_compiler = cc,
+                cxx_compiler = cxx
+        )
