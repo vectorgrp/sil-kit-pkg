@@ -169,8 +169,8 @@ class SilKitDEB(SilKitPKG):
             return BuildFlags(
                 add_platform_flags="-gdwarf-4",
                 add_debuild_flags=[],
-                c_compiler=env_or("CC", "clang"),
-                cxx_compiler=env_or("CXX", "clang++"),
+                c_compiler=env_or("CC", "clang-10"),
+                cxx_compiler=env_or("CXX", "clang++-10"),
             )
 
         if ubuntu_version == "22.04":
