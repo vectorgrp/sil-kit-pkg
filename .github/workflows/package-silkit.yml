@@ -90,7 +90,7 @@ jobs:
                   "output_dir": "${{ env.PKG_OUTDIR }}",
                   "platform": "Ubuntu-20.04",
                   "debuild": {
-                      "args": ["-d", "--prepend-path=/opt/vector/bin"],
+                      "args": ["-d", "--prepend-path=/opt/vector/bin"]
                   }
               }
 
