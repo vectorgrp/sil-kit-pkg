@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 import subprocess
 import logging
@@ -33,6 +33,11 @@ class SilKitInfo:
 
 
 @dataclass
+class DebuildInfo:
+    args: list
+
+
+@dataclass
 class BuildInfo:
 
     silkit_pkg_path: Path
@@ -43,12 +48,13 @@ class BuildInfo:
     work_dir: Path
     keep_temp: bool
     output_dir: Path
+    debuild: DebuildInfo
 
 
 @dataclass
 class BuildFlags:
-    add_platform_flags: str
-    add_debuild_flags: str
+    add_platform_flags: list
+    add_debuild_flags: list
     c_compiler: str
     cxx_compiler: str
 
