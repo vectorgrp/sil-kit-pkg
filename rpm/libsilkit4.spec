@@ -87,6 +87,20 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 
 %changelog
 
+* Mon May 19 2025 Jan Kraemer <jan.kraemer@vector.com> - 4.0.56-1
+- Three static methods which are part of the C++ (Hourglass) API
+  implementation and passed as callbacks to the C-API, did not use the
+  correct calling convention if the default calling convention wasn't
+  __cdecl on Windows. This has been remedied.
+- SilKitDemoSimStepAsync did not work as intended, due to the predicate
+  lambda capturing by-value instead of by-reference
+- The participant configuration TcpNoDelay now defaults to true. Please
+  note, that this has performance implications. On Linux platforms this
+  improves throughput, and latency in particular when used in combination
+  with TcpQuickAck: true
+- The documentation now contains a page that explains the upcoming new
+  versioning scheme. Experimental other-simulation-steps-completed API
+
 * Fri Feb 07 2025 Jan Kraemer <jan.kraemer@vector.com> - 4.0.56~rc1
 - New pre release
 * Wed Jan 29 2025 Jan Kraemer <jan.kraemer@vector.com> - 4.0.55-1
