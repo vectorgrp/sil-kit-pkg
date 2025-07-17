@@ -1,7 +1,7 @@
-%define version_major 4
+%define version_major 5
 %define version_minor 0
-%define version_patch 56
-%define version_suffix %{nil}
+%define version_patch 0
+%define version_suffix rc1
 
 
 %if "%{version_suffix}" == ""
@@ -10,7 +10,7 @@
 %define silkit_version %{version_major}.%{version_minor}.%{version_patch}~%{version_suffix}
 %endif
 
-Name:       libsilkit%{version_major}
+Name:       libsilkit5
 Version:    %{silkit_version}
 Release:    %autorelease
 Summary:    The SIL Framework from Vector
@@ -23,6 +23,8 @@ BuildRequires: ninja-build
 BuildRequires: cmake
 BuildRequires: lld
 BuildRequires: systemd-rpm-macros
+Obsoletes: libsilkit4
+Conflicts: libsilkit4
 
 %description
 An open-source library for connecting Software-in-the-Loop Environments
@@ -54,6 +56,7 @@ Utility programs for libsilkit. Includes
         -DSILKIT_BUILD_DEMOS=Off \\\
         -S . \\\
         -GNinja \\\
+	-DCMAKE_BUILD_TYPE=RelWithDebInfo \\\
         -DCMAKE_EXE_LINKER_FLAGS="${CMAKE_EXE_LINKER_FLAGS} -Wl,--undefined-version -fuse-ld=lld -Wl,--build-id=sha1 -pie" \\\
         -DCMAKE_MODULE_LINKER_FLAGS="${CMAKE_MODULE_LINKER_FLAGS} -Wl,--undefined-version -fuse-ld=lld -Wl,--build-id=sha1" \\\
         -DCMAKE_SHARED_LINKER_FLAGS="${CMAKE_SHARED_LINKER_FLAGS} -Wl,--as-needed -Wl,--no-undefined -Wl,-z,now -Wl,--undefined-version -fuse-ld=lld -Wl,--build-id=sha1" \\\
@@ -86,6 +89,9 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 %{_unitdir}/sil-kit-registry.service
 
 %changelog
+
+* Thu Jul 17 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.0~rc1
+- New pre release
 
 * Mon May 19 2025 Jan Kraemer <jan.kraemer@vector.com> - 4.0.56-1
 - Three static methods which are part of the C++ (Hourglass) API

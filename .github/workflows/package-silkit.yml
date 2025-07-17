@@ -79,10 +79,10 @@ jobs:
                   },
                   "package_repo_path": "sil-kit-pkg",
                   "version": {
-                      "major": 4,
+                      "major": 5,
                       "minor": 0,
-                      "patch": 56,
-                      "suffix": ""
+                      "patch": 0,
+                      "suffix": "rc1"
                   },
                   "pkgformat": "deb",
                   "work_dir": "${{ env.PKG_WORKDIR }}",
@@ -167,10 +167,10 @@ jobs:
                   },
                   "package_repo_path": "sil-kit-pkg",
                   "version": {
-                      "major": 4,
+                      "major": 5,
                       "minor": 0,
-                      "patch": 56,
-                      "suffix": ""
+                      "patch": 0,
+                      "suffix": "rc1"
                   },
                   "pkgformat": "rpm",
                   "work_dir": "${{ env.PKG_WORKDIR }}",
