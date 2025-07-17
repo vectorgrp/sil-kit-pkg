@@ -79,9 +79,9 @@ jobs:
                   },
                   "package_repo_path": "sil-kit-pkg",
                   "version": {
-                      "major": 4,
+                      "major": 5,
                       "minor": 0,
-                      "patch": 56,
+                      "patch": 0,
                       "suffix": "rc1"
                   },
                   "pkgformat": "deb",

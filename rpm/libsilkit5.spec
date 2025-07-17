@@ -1,6 +1,6 @@
-%define version_major 4
+%define version_major 5
 %define version_minor 0
-%define version_patch 56
+%define version_patch 0
 %define version_suffix rc1
 
 
@@ -10,7 +10,7 @@
 %define silkit_version %{version_major}.%{version_minor}.%{version_patch}
 %endif
 
-Name:       libsilkit4
+Name:       libsilkit5
 Version:    %{silkit_version}
 Release:    %autorelease
 Summary:    The SIL Framework from Vector
@@ -86,6 +86,9 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 %{_unitdir}/sil-kit-registry.service
 
 %changelog
+
+* Thu Jul 17 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.0~rc1
+- New pre release
 
 * Mon May 19 2025 Jan Kraemer <jan.kraemer@vector.com> - 4.0.56-1
 - Three static methods which are part of the C++ (Hourglass) API

@@ -116,7 +116,7 @@ def clone_silkit(builder: SilKitPKG):
 
         if build_info.silkit_info.recursive == True:
 
-            submodules = ["fmt", "spdlog", "googletest", "yaml-cpp", "asio"]
+            submodules = ["fmt", "spdlog", "googletest", "asio"]
 
             logger.debug("Syncing the submodules!")
 
