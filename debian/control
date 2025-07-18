@@ -43,7 +43,7 @@ Package: silkit-utils
 Section: libdevel
 Architecture: any
 Multi-Arch: no
-Depends: libsilkit4(= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Depends: libsilkit5(= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
 Enhances: libsilkit4
 Description: Development packages for libsilkit
  The Vector SIL Kit is an open-source library for connecting
