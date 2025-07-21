@@ -23,20 +23,22 @@ BuildRequires: ninja-build
 BuildRequires: cmake
 BuildRequires: lld
 BuildRequires: systemd-rpm-macros
+Obsoletes: libsilkit4
+Conflicts: libsilkit4
 
 %description
 An open-source library for connecting Software-in-the-Loop Environments
 
 %package devel
 Summary: Develop Files for the libsilkit package
-Requires: libsilkit4
+Requires: libsilkit5
 
 %description devel
 The development headers and CMake files for libsilkit
 
 %package utils
 Summary: SilKit Util Binaries
-Requires: libsilkit4
+Requires: libsilkit5
 
 %description utils
 Utility programs for libsilkit. Includes

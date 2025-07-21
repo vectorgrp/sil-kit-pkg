@@ -29,6 +29,8 @@ Architecture: any
 Multi-Arch: no
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: silkit-utils
+Conflicts: libsilkit4
+Replaces: libsilkit4
 Description: Simulation in the loop kit by Vector
  The Vector SIL Kit is an open-source library for connecting
  Software-in-the-Loop Environments. This README is intended to provide you with
@@ -44,7 +46,7 @@ Section: libdevel
 Architecture: any
 Multi-Arch: no
 Depends: libsilkit5(= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
-Enhances: libsilkit4
+Enhances: libsilkit5
 Description: Development packages for libsilkit
  The Vector SIL Kit is an open-source library for connecting
  Software-in-the-Loop Environments. This README is intended to provide you with
