@@ -1,16 +1,16 @@
 %define version_major 4
 %define version_minor 0
 %define version_patch 56
-%define version_suffix rc1
+%define version_suffix %{nil}
 
 
-%if "%{version_suffix}"
-%define silkit_version %{version_major}.%{version_minor}.%{version_patch}~%{version_suffix}
-%else
+%if "%{version_suffix}" == ""
 %define silkit_version %{version_major}.%{version_minor}.%{version_patch}
+%else
+%define silkit_version %{version_major}.%{version_minor}.%{version_patch}~%{version_suffix}
 %endif
 
-Name:       libsilkit4
+Name:       libsilkit%{version_major}
 Version:    %{silkit_version}
 Release:    %autorelease
 Summary:    The SIL Framework from Vector
@@ -29,14 +29,14 @@ An open-source library for connecting Software-in-the-Loop Environments
 
 %package devel
 Summary: Develop Files for the libsilkit package
-Requires: libsilkit4
+Requires: libsilkit%{version_major}
 
 %description devel
 The development headers and CMake files for libsilkit
 
 %package utils
 Summary: SilKit Util Binaries
-Requires: libsilkit4
+Requires: libsilkit%{version_major}
 
 %description utils
 Utility programs for libsilkit. Includes
