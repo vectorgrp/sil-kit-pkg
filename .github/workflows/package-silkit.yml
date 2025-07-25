@@ -239,7 +239,7 @@ jobs:
                   echo 'prerelease=--prerelease' >> $GITHUB_OUTPUT
                   ;;
               *)
-                  echo 'prerelease=""' >> $GITHUB_OUTPUT
+                  echo 'prerelease=' >> $GITHUB_OUTPUT
                   ;;
           esac
 
