@@ -82,7 +82,7 @@ jobs:
                       "major": 5,
                       "minor": 0,
                       "patch": 0,
-                      "suffix": "rc1"
+                      "suffix": ""
                   },
                   "pkgformat": "deb",
                   "work_dir": "${{ env.PKG_WORKDIR }}",
@@ -170,7 +170,7 @@ jobs:
                       "major": 5,
                       "minor": 0,
                       "patch": 0,
-                      "suffix": "rc1"
+                      "suffix": ""
                   },
                   "pkgformat": "rpm",
                   "work_dir": "${{ env.PKG_WORKDIR }}",

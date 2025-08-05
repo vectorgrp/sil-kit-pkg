@@ -1,7 +1,7 @@
 %define version_major 5
 %define version_minor 0
 %define version_patch 0
-%define version_suffix rc1
+%define version_suffix %{nil}
 
 
 %if "%{version_suffix}" == ""
@@ -90,8 +90,13 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 
 %changelog
 
-* Thu Jul 17 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.0~rc1
-- New pre release
+* Thu Jul 17 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.0
+- API: added new SilKit_ParticipantConfiguration_ToJson function which exports the complete parsed and validated participant configuration as a JSON string.
+- dashboard: add performance related metrics.
+- public API: removed harmful noexcept and added a missing virtual destructor.
+- dashboard: removed legacy v1.0 API.
+- build: the internal code now uses C++17
+- config: we replaced yaml-cpp with rapidyaml and rewrote the YAML/JSON parsing.
 
 * Mon May 19 2025 Jan Kraemer <jan.kraemer@vector.com> - 4.0.56-1
 - Three static methods which are part of the C++ (Hourglass) API
