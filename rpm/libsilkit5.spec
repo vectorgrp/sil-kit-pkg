@@ -91,7 +91,8 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 %changelog
 
 * Thu Jul 17 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.0
-- API: added new SilKit_ParticipantConfiguration_ToJson function which exports the complete parsed and validated participant configuration as a JSON string.
+- API: added new SilKit_ParticipantConfiguration_ToJson function which exports
+  the complete parsed and validated participant configuration as a JSON string.
 - dashboard: add performance related metrics.
 - public API: removed harmful noexcept and added a missing virtual destructor.
 - dashboard: removed legacy v1.0 API.
