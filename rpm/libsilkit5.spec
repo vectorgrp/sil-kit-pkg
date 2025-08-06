@@ -1,6 +1,6 @@
 %define version_major 5
 %define version_minor 0
-%define version_patch 0
+%define version_patch 1
 %define version_suffix %{nil}
 
 
@@ -89,6 +89,9 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 %{_unitdir}/sil-kit-registry.service
 
 %changelog
+
+* Wed Aug 06 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.1
+- Fix building SIL Kit from source
 
 * Thu Jul 17 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.0
 - API: added new SilKit_ParticipantConfiguration_ToJson function which exports
