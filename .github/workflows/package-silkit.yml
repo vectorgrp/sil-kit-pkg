@@ -34,9 +34,46 @@ env:
   PKG_OUTDIR:  _o
 
 jobs:
+
+  get_version:
+    runs-on: ubuntu-latest
+    name: Job to get the current SIL KIT Version to package
+    outputs:
+      silkit_major: ${{ steps.get_version.outputs.silkit_major }}
+      silkit_minor: ${{ steps.get_version.outputs.silkit_minor }}
+      silkit_patch: ${{ steps.get_version.outputs.silkit_patch }}
+      silkit_suffix: ${{ steps.get_version.outputs.silkit_suffix }}
+    steps:
+      - name: Checkout (sil-kit-pkg)
+        uses: actions/checkout@v4
+        with:
+          path: sil-kit-pkg
+
+      - name: Get Version
+        id: get_version
+        shell: python
+        run: |
+          import os
+          import re
+
+          with open('sil-kit-pkg/debian/changelog', 'r') as cl:
+            line = cl.readline()
+            reg = r'libsilkit\s+\(([0-9]+)\.([0-9]+)\.([0-9]+)\~*([A-Za-z]+[0-9]+)?\-[0-9]ubuntu[0-9]\).*'
+            reg_match = re.match(reg, line)
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+            fh.write(f"silkit_major={reg_match.group(1)}\n")
+            fh.write(f"silkit_minor={reg_match.group(2)}\n")
+            fh.write(f"silkit_patch={reg_match.group(3)}\n")
+
+            suffix = "" if reg_match.group(4) is None else reg_match.group(4)
+            fh.write(f"silkit_suffix={suffix}\n")
+
+
   package_ubuntu:
     runs-on: ubuntu-latest
     name: Job to build .deb for Ubuntu 20.04+ packages
+    needs: get_version
     container:
       image: ghcr.io/vectorgrp/sil-kit-docker-build/sil-kit-ci-packaging-ubuntu-20.04:main
     env:
@@ -79,10 +116,10 @@ jobs:
                   },
                   "package_repo_path": "sil-kit-pkg",
                   "version": {
-                      "major": 5,
-                      "minor": 0,
-                      "patch": 0,
-                      "suffix": ""
+                      "major": ${{ needs.get_version.outputs.silkit_major }},
+                      "minor": ${{ needs.get_version.outputs.silkit_minor }},
+                      "patch": ${{ needs.get_version.outputs.silkit_patch }},
+                      "suffix": "${{ needs.get_version.outputs.silkit_suffix }}"
                   },
                   "pkgformat": "deb",
                   "work_dir": "${{ env.PKG_WORKDIR }}",
@@ -130,6 +167,7 @@ jobs:
   package_almalinux:
     runs-on: ubuntu-latest
     name: Job to build Alma Linux 9 packages
+    needs: get_version
     container:
       image: ghcr.io/vectorgrp/sil-kit-docker-build/sil-kit-ci-packaging-fedora-40:main
       options: --privileged
@@ -167,10 +205,10 @@ jobs:
                   },
                   "package_repo_path": "sil-kit-pkg",
                   "version": {
-                      "major": 5,
-                      "minor": 0,
-                      "patch": 0,
-                      "suffix": ""
+                      "major": ${{ needs.get_version.outputs.silkit_major }},
+                      "minor": ${{ needs.get_version.outputs.silkit_minor }},
+                      "patch": ${{ needs.get_version.outputs.silkit_patch }},
+                      "suffix": "${{ needs.get_version.outputs.silkit_suffix }}"
                   },
                   "pkgformat": "rpm",
                   "work_dir": "${{ env.PKG_WORKDIR }}",
