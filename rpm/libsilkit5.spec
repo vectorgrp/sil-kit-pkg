@@ -90,6 +90,10 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 
 %changelog
 
+* Tue Sep 02 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.2
+- `asio`: replaced the deprecated (and now removed) methods
+  `asio::io_context::post` and `asio::io_context::dispatch`
+
 * Wed Aug 06 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.1
 - Fix building SIL Kit from source
 
