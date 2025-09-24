@@ -1,3 +1,9 @@
+libsilkit (5.0.2~rc1-1ubuntu1) UNRELEASED; urgency=medium
+
+  * Do not enable the silkit-registry.service by default
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Wed, 24 Aug 2025 17:00:00 +0200
+
 libsilkit (5.0.1-1ubuntu1) UNRELEASED; urgency=medium
 
   * Fix building SIL Kit from source
