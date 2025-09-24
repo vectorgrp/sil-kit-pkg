@@ -1,7 +1,7 @@
 %define version_major 5
 %define version_minor 0
-%define version_patch 1
-%define version_suffix %{nil}
+%define version_patch 2
+%define version_suffix rc1
 
 
 %if "%{version_suffix}" == ""
@@ -89,6 +89,9 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 %{_unitdir}/sil-kit-registry.service
 
 %changelog
+
+* Wed Sep 24 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.2~rc1
+- New Pre-Release
 
 * Wed Aug 06 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.1
 - Fix building SIL Kit from source
