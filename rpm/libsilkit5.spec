@@ -90,6 +90,10 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 
 %changelog
 
+* Wed Oct 08 2025 asd <asd> - 5.0.2
+- `asio`: replaced the deprecated (and now removed) methods
+  `asio::io_context::post` and `asio::io_context::dispatch`
+
 * Wed Sep 24 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.2~rc1
 - New Pre-Release
 

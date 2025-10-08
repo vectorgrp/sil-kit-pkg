@@ -1,3 +1,7 @@
+
+libsilkit (5.0.2-1ubuntu1) stable; urgency=medium
+  * `asio`: replaced the deprecated (and now removed) methods
+    `asio::io_context::post` and `asio::io_context::dispatch`
 libsilkit (5.0.2~rc1-1ubuntu1) UNRELEASED; urgency=medium
 
   * Do not enable the silkit-registry.service by default
