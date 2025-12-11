@@ -1,3 +1,7 @@
+libsilkit (5.0.3-1ubuntu1) stable; urgency=medium
+
+ -- asd <asd> Thu, 11 Dec 2025 14:00:44 +0100
+
 libsilkit (5.0.2-1ubuntu1) stable; urgency=medium
   * `asio`: replaced the deprecated (and now removed) methods
     `asio::io_context::post` and `asio::io_context::dispatch` with the
