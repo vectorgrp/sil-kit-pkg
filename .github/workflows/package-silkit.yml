@@ -271,10 +271,6 @@ jobs:
           ref: ${{ inputs.silkit_source_ref }}
           github-server-url: https://github.com
 
-      - name: Install cmake
-        run: |
-          sh sil-kit-pkg/.github/actions/fetch_cmake.sh
-
       - name: Install debhelper
         run: |
 
@@ -283,7 +279,9 @@ jobs:
               dpkg-dev \
               devscripts \
               dh-make \
-              zip
+              zip \
+              cmake \
+              ninja-build
 
       - name: Build
         id: build
