@@ -24,6 +24,7 @@ def create_arg_parser() -> ArgumentParser:
     ap.add_argument("--package-directory", type=Path, required=True)
     ap.add_argument("--test-directory", type=Path, required=True)
     ap.add_argument("--distro", type=str, required=True)
+    ap.add_argument("--distro-version", type=int, required=True)
     return ap
 
 def install_debs(deb_directory):
@@ -81,12 +82,13 @@ def close_registry(reg_proc: subprocess.Popen):
     else:
         print("All is fine, exiting gracefully!")
 
-def build_test(test_dir, distro: str):
+def build_test(test_dir, distro: str, distro_version: int):
 
-    cc = "clang-10" if distro.lower() == "ubuntu" else "clang"
-    cxx = "clang++-10" if distro.lower() == "ubuntu" else "clang++"
+    cc = "clang-10" if distro.lower() == "ubuntu" and distro_version < 22 else "clang"
+    cxx = "clang++-10" if distro.lower() == "ubuntu" and distro_version < 22 else "clang++"
 
     print("\nBuild the SilKit Test program")
+    print(f"Using {cc} and {cxx}")
     print("--------------------------------\n", flush=True)
     # Clean the workspace
     subprocess.run(['rm', '-rf', '_build'], cwd=test_dir, check=True)
@@ -130,7 +132,7 @@ def main():
     # Check demo program (compilation/link/execution)
     test_dir = args.test_directory
     build_dir = test_dir / '_build'
-    build_test(test_dir, args.distro)
+    build_test(test_dir, args.distro, args.distro_version)
     registry = run_registry()
     ret_code = 0
     try:

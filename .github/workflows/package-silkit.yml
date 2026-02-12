@@ -150,6 +150,7 @@ jobs:
 ##          --package-directory "$PKG_DIR" \
 ##          --test-directory "$TEST_DIR" \
 ##          --distro ubuntu
+##          --distro-version 20
 ##
 ##      - name: Artifact
 ##        id: artifact
@@ -238,6 +239,7 @@ jobs:
 ##          --package-directory "$PKG_DIR" \
 ##          --test-directory "$TEST_DIR" \
 ##          --distro fedora
+##          --distro-version 40
 ##
 ##      - name: Artifact
 ##        id: artifact
@@ -333,7 +335,8 @@ jobs:
           python3 sil-kit-pkg/tests/test_deb.py \
           --package-directory "$PKG_DIR" \
           --test-directory "$TEST_DIR" \
-          --distro ubuntu
+          --distro ubuntu \
+          --distro-version 22
 
       - name: Artifact
         id: artifact
