@@ -70,14 +70,192 @@ jobs:
             fh.write(f"silkit_suffix={suffix}\n")
 
 
-  package_ubuntu:
-    runs-on: ubuntu-latest
-    name: Job to build .deb for Ubuntu 20.04+ packages
+##  package_ubuntu:
+##    runs-on: ubuntu-latest
+##    name: Job to build .deb for Ubuntu 20.04+ packages
+##    needs: get_version
+##    container:
+##      image: ghcr.io/vectorgrp/sil-kit-docker-build/sil-kit-ci-packaging-ubuntu-20.04:main
+##    env:
+##      ARTIFACT_NAME: silkit-ubuntu-20.04-deb
+##
+##    steps:
+##
+##      - name: Checkout (sil-kit-pkg)
+##        uses: actions/checkout@v4
+##        with:
+##          path: sil-kit-pkg
+##
+##      - name: Checkout (sil-kit)
+##        uses: actions/checkout@v4
+##        with:
+##          repository: ${{ inputs.silkit_source_repo }}
+##          submodules: recursive
+##          path: sil-kit
+##          ref: ${{ inputs.silkit_source_ref }}
+##          github-server-url: https://github.com
+##
+##      - name: Install cmake
+##        run: |
+##          sh sil-kit-pkg/.github/actions/fetch_cmake.sh
+##
+##      - name: Build
+##        id: build
+##        env:
+##          DEBFULLNAME: ${{ inputs.debian_fullname }}
+##          DEBEMAIL: ${{ inputs.debian_fullname }}
+##          CI_RUN: "1"
+##          BUILD_SETTINGS: |
+##              {
+##
+##                  "SilKitInfo": {
+##                      "url": "sil-kit",
+##                      "ref": "",
+##                      "recursive": true,
+##                      "is_local": true
+##                  },
+##                  "package_repo_path": "sil-kit-pkg",
+##                  "version": {
+##                      "major": ${{ needs.get_version.outputs.silkit_major }},
+##                      "minor": ${{ needs.get_version.outputs.silkit_minor }},
+##                      "patch": ${{ needs.get_version.outputs.silkit_patch }},
+##                      "suffix": "${{ needs.get_version.outputs.silkit_suffix }}"
+##                  },
+##                  "pkgformat": "deb",
+##                  "work_dir": "${{ env.PKG_WORKDIR }}",
+##                  "keep_temp": true,
+##                  "output_dir": "${{ env.PKG_OUTDIR }}",
+##                  "platform": "Ubuntu-20.04",
+##                  "debuild": {
+##                      "args": ["-d", "--prepend-path=/opt/vector/bin"]
+##                  }
+##              }
+##
+##        run: |
+##          mkdir -p $PKG_WORKDIR
+##          mkdir -p $PKG_OUTDIR
+##          touch $PKG_WORKDIR/build_cfg.json
+##          printf %s $BUILD_SETTINGS  > $PKG_WORKDIR/build_cfg.json
+##          python3 sil-kit-pkg/scripts/silkit_linux_packaging.py \
+##            --build-cfg $PKG_WORKDIR/build_cfg.json \
+##            --verbose
+##
+##      - name: Test Package
+##        id: test
+##        env:
+##          PKG_DIR: ./${{ env.PKG_OUTDIR }}
+##          TEST_DIR: ./sil-kit-pkg/tests/
+##        run: |
+##          python3 sil-kit-pkg/tests/test_deb.py \
+##          --package-directory "$PKG_DIR" \
+##          --test-directory "$TEST_DIR" \
+##          --distro ubuntu
+##
+##      - name: Artifact
+##        id: artifact
+##        uses: actions/upload-artifact@v4
+##        with:
+##          name: ${{ env.ARTIFACT_NAME }}
+##          path: |
+##            ./${{ env.PKG_OUTDIR }}/*.dsc
+##            ./${{ env.PKG_OUTDIR }}/*.build*
+##            ./${{ env.PKG_OUTDIR }}/*.changes
+##            ./${{ env.PKG_OUTDIR }}/*.*deb
+##          retention-days: 1
+##
+##
+##  package_almalinux:
+##    runs-on: ubuntu-latest
+##    name: Job to build Alma Linux 9 packages
+##    needs: get_version
+##    container:
+##      image: ghcr.io/vectorgrp/sil-kit-docker-build/sil-kit-ci-packaging-fedora-40:main
+##      options: --privileged
+##    env:
+##      ARTIFACT_NAME: silkit-almalinux-9-rpm
+##
+##    steps:
+##
+##      - name: Checkout (sil-kit-pkg)
+##        uses: actions/checkout@v4
+##        with:
+##          path: sil-kit-pkg
+##
+##      - name: Checkout (sil-kit)
+##        uses: actions/checkout@v4
+##        with:
+##          repository: ${{ inputs.silkit_source_repo }}
+##          submodules: recursive
+##          path: sil-kit
+##          ref: ${{ inputs.silkit_source_ref }}
+##          github-server-url: https://github.com
+##
+##      - name: Build
+##        id: build
+##        env:
+##          CI_RUN: "1"
+##          BUILD_SETTINGS: |
+##              {
+##
+##                  "SilKitInfo": {
+##                      "url": "sil-kit",
+##                      "ref": "",
+##                      "recursive": true,
+##                      "is_local": true
+##                  },
+##                  "package_repo_path": "sil-kit-pkg",
+##                  "version": {
+##                      "major": ${{ needs.get_version.outputs.silkit_major }},
+##                      "minor": ${{ needs.get_version.outputs.silkit_minor }},
+##                      "patch": ${{ needs.get_version.outputs.silkit_patch }},
+##                      "suffix": "${{ needs.get_version.outputs.silkit_suffix }}"
+##                  },
+##                  "pkgformat": "rpm",
+##                  "work_dir": "${{ env.PKG_WORKDIR }}",
+##                  "keep_temp": true,
+##                  "output_dir": "${{ env.PKG_OUTDIR }}",
+##                  "platform": "epel9"
+##              }
+##
+##        run: |
+##          mkdir -p $PKG_WORKDIR
+##          mkdir -p $PKG_OUTDIR
+##          touch $PKG_WORKDIR/build_cfg.json
+##          printf %s $BUILD_SETTINGS  > $PKG_WORKDIR/build_cfg.json
+##          usermod -a -G mock root
+##          python3 sil-kit-pkg/scripts/silkit_linux_packaging.py \
+##            --build-cfg $PKG_WORKDIR/build_cfg.json \
+##            --verbose
+##
+##      - name: Test Package
+##        id: test
+##        env:
+##          PKG_DIR: ./${{ env.PKG_OUTDIR }}
+##          TEST_DIR: ./sil-kit-pkg/tests
+##        run: |
+##          dnf install -y cmake clang ninja-build
+##          python3 sil-kit-pkg/tests/test_deb.py \
+##          --package-directory "$PKG_DIR" \
+##          --test-directory "$TEST_DIR" \
+##          --distro fedora
+##
+##      - name: Artifact
+##        id: artifact
+##        uses: actions/upload-artifact@v4
+##        with:
+##          name: ${{ env.ARTIFACT_NAME }}
+##          path: |
+##            ./${{ env.PKG_OUTDIR }}/*.rpm
+##          retention-days: 1
+
+  package_ubuntu_arm:
+    runs-on: ubuntu-22.04-arm
+    name: Job to build .deb for Ubuntu 22.04+ ARM64 packages
     needs: get_version
     container:
       image: ghcr.io/vectorgrp/sil-kit-docker-build/sil-kit-ci-packaging-ubuntu-20.04:main
     env:
-      ARTIFACT_NAME: silkit-ubuntu-20.04-deb
+      ARTIFACT_NAME: silkit-ubuntu-22.04-aarch64-deb
 
     steps:
 
@@ -125,7 +303,7 @@ jobs:
                   "work_dir": "${{ env.PKG_WORKDIR }}",
                   "keep_temp": true,
                   "output_dir": "${{ env.PKG_OUTDIR }}",
-                  "platform": "Ubuntu-20.04",
+                  "platform": "Ubuntu-22.04-aarch64",
                   "debuild": {
                       "args": ["-d", "--prepend-path=/opt/vector/bin"]
                   }
@@ -164,151 +342,67 @@ jobs:
           retention-days: 1
 
 
-  package_almalinux:
-    runs-on: ubuntu-latest
-    name: Job to build Alma Linux 9 packages
-    needs: get_version
-    container:
-      image: ghcr.io/vectorgrp/sil-kit-docker-build/sil-kit-ci-packaging-fedora-40:main
-      options: --privileged
-    env:
-      ARTIFACT_NAME: silkit-almalinux-9-rpm
 
-    steps:
-
-      - name: Checkout (sil-kit-pkg)
-        uses: actions/checkout@v4
-        with:
-          path: sil-kit-pkg
-
-      - name: Checkout (sil-kit)
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ inputs.silkit_source_repo }}
-          submodules: recursive
-          path: sil-kit
-          ref: ${{ inputs.silkit_source_ref }}
-          github-server-url: https://github.com
-
-      - name: Build
-        id: build
-        env:
-          CI_RUN: "1"
-          BUILD_SETTINGS: |
-              {
-
-                  "SilKitInfo": {
-                      "url": "sil-kit",
-                      "ref": "",
-                      "recursive": true,
-                      "is_local": true
-                  },
-                  "package_repo_path": "sil-kit-pkg",
-                  "version": {
-                      "major": ${{ needs.get_version.outputs.silkit_major }},
-                      "minor": ${{ needs.get_version.outputs.silkit_minor }},
-                      "patch": ${{ needs.get_version.outputs.silkit_patch }},
-                      "suffix": "${{ needs.get_version.outputs.silkit_suffix }}"
-                  },
-                  "pkgformat": "rpm",
-                  "work_dir": "${{ env.PKG_WORKDIR }}",
-                  "keep_temp": true,
-                  "output_dir": "${{ env.PKG_OUTDIR }}",
-                  "platform": "epel9"
-              }
-
-        run: |
-          mkdir -p $PKG_WORKDIR
-          mkdir -p $PKG_OUTDIR
-          touch $PKG_WORKDIR/build_cfg.json
-          printf %s $BUILD_SETTINGS  > $PKG_WORKDIR/build_cfg.json
-          usermod -a -G mock root
-          python3 sil-kit-pkg/scripts/silkit_linux_packaging.py \
-            --build-cfg $PKG_WORKDIR/build_cfg.json \
-            --verbose
-
-      - name: Test Package
-        id: test
-        env:
-          PKG_DIR: ./${{ env.PKG_OUTDIR }}
-          TEST_DIR: ./sil-kit-pkg/tests
-        run: |
-          dnf install -y cmake clang ninja-build
-          python3 sil-kit-pkg/tests/test_deb.py \
-          --package-directory "$PKG_DIR" \
-          --test-directory "$TEST_DIR" \
-          --distro fedora
-
-      - name: Artifact
-        id: artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.ARTIFACT_NAME }}
-          path: |
-            ./${{ env.PKG_OUTDIR }}/*.rpm
-          retention-days: 1
-
-
-  make-release:
-    runs-on: ubuntu-latest
-    needs: [package_ubuntu, package_almalinux]
-    if: inputs.silkit_pkg_ref != ''
-    permissions:
-      contents: write
-
-    steps:
-
-      - name: download_artifact
-        uses: actions/download-artifact@v4
-
-      - name: Prepare artifact
-        run: |
-          sha256sum silkit-almalinux-9-rpm/* >> ./SHA256
-          sha256sum silkit-ubuntu-20.04-deb/* >> ./SHA256
-
-      - name: Prepare GIT tag
-        id: git_tag
-        run: |
-          echo ${{ inputs.silkit_pkg_ref }}
-          echo ${{ inputs.silkit_pkg_ref }} | sed --expression="s/~rc/-rc/g"
-          echo "git_tag=$(echo ${{ inputs.silkit_pkg_ref }} | sed --expression="s/~rc/-rc/g")" >> $GITHUB_OUTPUT
-          case "${{ inputs.silkit_pkg_ref }}" in
-              *rc* )
-                  echo 'prerelease=--prerelease' >> $GITHUB_OUTPUT
-                  ;;
-              *)
-                  echo 'prerelease=' >> $GITHUB_OUTPUT
-                  ;;
-          esac
-
-      - name: Create git tag
-        uses: actions/github-script@v7
-        with:
-          script: |
-            try {
-              await github.rest.git.createRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: 'refs/tags/${{ steps.git_tag.outputs.git_tag }}',
-                sha: context.sha,
-              })
-            } catch(error) {
-              core.warning("Could not create the specified ref, continuing without it!")
-            }
-
-
-      - name: Release artifact
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          echo ${{ steps.git_tag.outputs.git_tag }}
-          gh release create \
-          ${{ steps.git_tag.outputs.git_tag }} \
-          ${{ github.workspace }}/silkit-ubuntu-20.04-deb/* \
-          ${{ github.workspace }}/silkit-almalinux-9-rpm/* \
-          SHA256 \
-          --verify-tag \
-          ${{ steps.git_tag.outputs.prerelease }} \
-          --repo "${{ github.repository }}" \
-          --title "${{ inputs.silkit_pkg_ref }}" \
-          --notes "Ubuntu and Fedora Packages for SIL Kit ${{ steps.git_tag.outputs.git_tag }}"
+##  make-release:
+##    runs-on: ubuntu-latest
+##    needs: [package_ubuntu, package_almalinux]
+##    if: inputs.silkit_pkg_ref != ''
+##    permissions:
+##      contents: write
+##
+##    steps:
+##
+##      - name: download_artifact
+##        uses: actions/download-artifact@v4
+##
+##      - name: Prepare artifact
+##        run: |
+##          sha256sum silkit-almalinux-9-rpm/* >> ./SHA256
+##          sha256sum silkit-ubuntu-20.04-deb/* >> ./SHA256
+##
+##      - name: Prepare GIT tag
+##        id: git_tag
+##        run: |
+##          echo ${{ inputs.silkit_pkg_ref }}
+##          echo ${{ inputs.silkit_pkg_ref }} | sed --expression="s/~rc/-rc/g"
+##          echo "git_tag=$(echo ${{ inputs.silkit_pkg_ref }} | sed --expression="s/~rc/-rc/g")" >> $GITHUB_OUTPUT
+##          case "${{ inputs.silkit_pkg_ref }}" in
+##              *rc* )
+##                  echo 'prerelease=--prerelease' >> $GITHUB_OUTPUT
+##                  ;;
+##              *)
+##                  echo 'prerelease=' >> $GITHUB_OUTPUT
+##                  ;;
+##          esac
+##
+##      - name: Create git tag
+##        uses: actions/github-script@v7
+##        with:
+##          script: |
+##            try {
+##              await github.rest.git.createRef({
+##                owner: context.repo.owner,
+##                repo: context.repo.repo,
+##                ref: 'refs/tags/${{ steps.git_tag.outputs.git_tag }}',
+##                sha: context.sha,
+##              })
+##            } catch(error) {
+##              core.warning("Could not create the specified ref, continuing without it!")
+##            }
+##
+##
+##      - name: Release artifact
+##        env:
+##          GH_TOKEN: ${{ github.token }}
+##        run: |
+##          echo ${{ steps.git_tag.outputs.git_tag }}
+##          gh release create \
+##          ${{ steps.git_tag.outputs.git_tag }} \
+##          ${{ github.workspace }}/silkit-ubuntu-20.04-deb/* \
+##          ${{ github.workspace }}/silkit-almalinux-9-rpm/* \
+##          SHA256 \
+##          --verify-tag \
+##          ${{ steps.git_tag.outputs.prerelease }} \
+##          --repo "${{ github.repository }}" \
+##          --title "${{ inputs.silkit_pkg_ref }}" \
+##          --notes "Ubuntu and Fedora Packages for SIL Kit ${{ steps.git_tag.outputs.git_tag }}"
