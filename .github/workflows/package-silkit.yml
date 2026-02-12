@@ -252,8 +252,6 @@ jobs:
     runs-on: ubuntu-22.04-arm
     name: Job to build .deb for Ubuntu 22.04+ ARM64 packages
     needs: get_version
-    container:
-      image: ghcr.io/vectorgrp/sil-kit-docker-build/sil-kit-ci-packaging-ubuntu-20.04:main
     env:
       ARTIFACT_NAME: silkit-ubuntu-22.04-aarch64-deb
 
