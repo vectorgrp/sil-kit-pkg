@@ -275,6 +275,16 @@ jobs:
         run: |
           sh sil-kit-pkg/.github/actions/fetch_cmake.sh
 
+      - name: Install debhelper
+        run: |
+
+          apt-get install -y \
+              debhelper \
+              dpkg-dev \
+              devscripts \
+              dh-make \
+              zip
+
       - name: Build
         id: build
         env:
