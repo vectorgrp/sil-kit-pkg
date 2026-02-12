@@ -1,3 +1,19 @@
+libsilkit (5.0.3-1ubuntu1) stable; urgency=medium
+  * `sil-kit-registry`: fixed crash whith enabled dashboard
+  * `sil-kit-registry`: allow configuration of the listen URI, when used as
+    Windows system service
+  * `cmake`: demo and utility `RPATH`s are now set to match the install
+    hierarchy on all systems
+  * `cmake`: use `CMAKE_POLICY_VERSION_MINIMUM` since `oatpp` uses an outdated
+    `cmake` version# Changed
+  * `sil-kit-registry`: stop force-disabling the dashboard when building Linux
+    packages# Added
+  * `docs`: added description of handling of CAN message sizes
+  * `cmake`: added explicit build options to QNX presets
+  * `flexray`: add second keyslot parameters to the FlexRay node parameters
+
+ -- Daniel Edwards <daniel.edwards@vector.com> Thu, 12 Feb 2026 21:12:42 +0100
+
 libsilkit (5.0.2-1ubuntu1) stable; urgency=medium
   * `asio`: replaced the deprecated (and now removed) methods
     `asio::io_context::post` and `asio::io_context::dispatch` with the
