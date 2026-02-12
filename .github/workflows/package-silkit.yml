@@ -278,7 +278,7 @@ jobs:
       - name: Install debhelper
         run: |
 
-          apt-get install -y \
+          sudo apt-get install -y \
               debhelper \
               dpkg-dev \
               devscripts \
