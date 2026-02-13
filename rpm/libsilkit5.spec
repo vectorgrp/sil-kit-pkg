@@ -98,9 +98,9 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 - `cmake`: demo and utility `RPATH`s are now set to match the install
   hierarchy on all systems
 - `cmake`: use `CMAKE_POLICY_VERSION_MINIMUM` since `oatpp` uses an outdated
-  `cmake` version# Changed
+  `cmake` version
 - `sil-kit-registry`: stop force-disabling the dashboard when building Linux
-  packages# Added
+  packages
 - `docs`: added description of handling of CAN message sizes
 - `cmake`: added explicit build options to QNX presets
 - `flexray`: add second keyslot parameters to the FlexRay node parameters
