@@ -91,6 +91,20 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 
 %changelog
 
+* Thu Feb 12 2026 Daniel Edwards <daniel.edwards@vector.com> - 5.0.3
+- `sil-kit-registry`: fixed crash whith enabled dashboard
+- `sil-kit-registry`: allow configuration of the listen URI, when used as
+  Windows system service
+- `cmake`: demo and utility `RPATH`s are now set to match the install
+  hierarchy on all systems
+- `cmake`: use `CMAKE_POLICY_VERSION_MINIMUM` since `oatpp` uses an outdated
+  `cmake` version
+- `sil-kit-registry`: stop force-disabling the dashboard when building Linux
+  packages
+- `docs`: added description of handling of CAN message sizes
+- `cmake`: added explicit build options to QNX presets
+- `flexray`: add second keyslot parameters to the FlexRay node parameters
+
 * Thu Dec 04 2025 Jan Kraemer <jan.kraemer@vector.com> - 5.0.2
 - `asio`: replaced the deprecated (and now removed) methods
   `asio::io_context::post` and `asio::io_context::dispatch` with the
