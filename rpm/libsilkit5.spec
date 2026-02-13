@@ -1,6 +1,6 @@
 %define version_major 5
 %define version_minor 0
-%define version_patch 2
+%define version_patch 3
 %define version_suffix %{nil}
 
 
