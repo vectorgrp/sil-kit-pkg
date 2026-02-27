@@ -173,7 +173,7 @@ jobs:
       image: ghcr.io/vectorgrp/sil-kit-docker-build/sil-kit-ci-packaging-fedora-40:main
       options: --privileged
     env:
-      ARTIFACT_NAME: silkit-almalinux-9-x86_64.rpm
+      ARTIFACT_NAME: silkit-almalinux-9-x86_64-rpm
 
     steps:
 
@@ -354,7 +354,7 @@ jobs:
 
   make-release:
     runs-on: ubuntu-latest
-    needs: [package_ubuntu, package_almalinux]
+    needs: [package_ubuntu, package_almalinux, package_ubuntu_arm]
     if: inputs.silkit_pkg_ref != ''
     permissions:
       contents: write
@@ -366,8 +366,8 @@ jobs:
 
       - name: Prepare artifact
         run: |
-          sha256sum silkit-almalinux-9-rpm/* >> ./SHA256
-          sha256sum silkit-ubuntu-20.04-deb/* >> ./SHA256
+          sha256sum silkit-almalinux-*-rpm/* >> ./SHA256
+          sha256sum silkit-ubuntu-*-deb/* >> ./SHA256
 
       - name: Prepare GIT tag
         id: git_tag
@@ -407,8 +407,11 @@ jobs:
           echo ${{ steps.git_tag.outputs.git_tag }}
           gh release create \
           ${{ steps.git_tag.outputs.git_tag }} \
-          ${{ github.workspace }}/silkit-ubuntu-20.04-deb/* \
-          ${{ github.workspace }}/silkit-almalinux-9-rpm/* \
+          ${{ github.workspace }}/silkit-ubuntu-*-deb/*.*deb \
+          ${{ github.workspace }}/silkit-ubuntu-*-deb/*.build* \
+          ${{ github.workspace }}/silkit-ubuntu-*-deb/*.changes \
+          ${{ github.workspace }}/silkit-ubuntu-*-x86_64-deb/*.dsc \
+          ${{ github.workspace }}/silkit-almalinux-*-rpm/* \
           SHA256 \
           --verify-tag \
           ${{ steps.git_tag.outputs.prerelease }} \
