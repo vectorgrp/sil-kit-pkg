@@ -354,8 +354,7 @@ jobs:
 
   make-release:
     runs-on: ubuntu-latest
-    #needs: [package_ubuntu, package_almalinux, package_ubuntu_arm]
-    needs: [package_ubuntu_arm]
+    needs: [package_ubuntu, package_almalinux, package_ubuntu_arm]
     if: inputs.silkit_pkg_ref != ''
     permissions:
       contents: write
