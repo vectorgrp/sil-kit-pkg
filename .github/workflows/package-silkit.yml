@@ -71,7 +71,6 @@ jobs:
 
 
   package_ubuntu:
-    if: false
     runs-on: ubuntu-latest
     name: Job to build .deb for Ubuntu 20.04+ packages
     needs: get_version
@@ -167,7 +166,6 @@ jobs:
 
 
   package_almalinux:
-    if: false
     runs-on: ubuntu-latest
     name: Job to build Alma Linux 9 packages
     needs: get_version
