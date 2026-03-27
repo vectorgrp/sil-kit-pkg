@@ -1,3 +1,7 @@
+define version_major 5
+define version_minor 0
+define version_patch 4
+define version_suffix %{nil}
 %define version_major 5
 %define version_minor 0
 %define version_patch 3
@@ -90,6 +94,14 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 %{_unitdir}/sil-kit-registry.service
 
 %changelog
+
+* Fri Mar 27 2026 Daniel Edwards <daniel.edwards@vector.com> - 5.0.4
+- `docs`: removed 'Vector' prefix where SIL Kit is mentioned in multiple
+  places
+- `demos`: improved code quality# Fixed
+- `pubsub` / `rpc`: fix some edge cases when matching labels
+- `lin`: fixed TX/RX behavior when controller is not operational
+- `lin`: populate the `timestamp` field in `LinControllerStatusUpdate` message
 
 * Thu Feb 12 2026 Daniel Edwards <daniel.edwards@vector.com> - 5.0.3
 - `sil-kit-registry`: fixed crash whith enabled dashboard
