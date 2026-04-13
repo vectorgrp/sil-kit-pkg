@@ -1,12 +1,7 @@
-define version_major 5
-define version_minor 0
-define version_patch 4
-define version_suffix %{nil}
 %define version_major 5
 %define version_minor 0
-%define version_patch 3
+%define version_patch 4
 %define version_suffix %{nil}
-
 
 
 %if "%{version_suffix}" == ""
@@ -61,7 +56,7 @@ Utility programs for libsilkit. Includes
         -DSILKIT_BUILD_DEMOS=Off \\\
         -S . \\\
         -GNinja \\\
-	-DCMAKE_BUILD_TYPE=RelWithDebInfo \\\
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo \\\
         -DCMAKE_EXE_LINKER_FLAGS="${CMAKE_EXE_LINKER_FLAGS} -Wl,--undefined-version -fuse-ld=lld -Wl,--build-id=sha1 -pie" \\\
         -DCMAKE_MODULE_LINKER_FLAGS="${CMAKE_MODULE_LINKER_FLAGS} -Wl,--undefined-version -fuse-ld=lld -Wl,--build-id=sha1" \\\
         -DCMAKE_SHARED_LINKER_FLAGS="${CMAKE_SHARED_LINKER_FLAGS} -Wl,--as-needed -Wl,--no-undefined -Wl,-z,now -Wl,--undefined-version -fuse-ld=lld -Wl,--build-id=sha1" \\\
