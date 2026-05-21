@@ -1,6 +1,6 @@
 %define version_major 5
 %define version_minor 0
-%define version_patch 4
+%define version_patch 5
 %define version_suffix %{nil}
 
 
@@ -89,6 +89,19 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 %{_unitdir}/sil-kit-registry.service
 
 %changelog
+
+* Thu May 21 2026 Lukas Becker <lukas.becker@vector.com> - 5.0.5
+- `lin`: fixed missing reception of the Go-To-Sleep frame by the master after
+  `GoToSleep()` in detailed simulation# Changed
+- `cmake`: merged almost all internal CMake `INTERFACE` libraries into
+  `I_SilKit`
+- `third-party`: update `oatpp` to version 1.3.1
+- `docs`: update the supported platforms table
+- `docs`: Extend docs by available metrics
+- `docs`: Add missing related products
+- `quality`: following small improvements - add missing `#pragma once` - add
+  `static` to some TU-local functions - add `inline` to some header-defined
+  functions - remove an obsolete source file - adjust warning flags
 
 * Fri Mar 27 2026 Daniel Edwards <daniel.edwards@vector.com> - 5.0.4
 - `docs`: removed 'Vector' prefix where SIL Kit is mentioned in multiple
