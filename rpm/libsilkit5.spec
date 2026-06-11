@@ -1,6 +1,6 @@
 %define version_major 5
 %define version_minor 0
-%define version_patch 5
+%define version_patch 7
 %define version_suffix %{nil}
 
 
@@ -89,6 +89,8 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 %{_unitdir}/sil-kit-registry.service
 
 %changelog
+
+* Thu Jun 11 2026 Konrad Breitsprecher <konrad.breitsprecher@vector.com> - 5.0.7
 
 * Thu May 21 2026 Lukas Becker <lukas.becker@vector.com> - 5.0.5
 - `lin`: fixed missing reception of the Go-To-Sleep frame by the master after
