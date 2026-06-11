@@ -1,3 +1,10 @@
+libsilkit (5.0.6-1ubuntu1) stable; urgency=medium
+  * `demo`: removed third-party dependency from performance test script
+  * `docs`: Fixed ethernet docs and samples
+  * `build`: Silence warning emitted from oatpp
+
+ -- Konrad Breitsprecher <konrad.breitsprecher@vector.com> Thu, 11 Jun 2026 16:35:05 +0200
+
 libsilkit (5.0.5-1ubuntu1) stable; urgency=medium
   * `lin`: fixed missing reception of the Go-To-Sleep frame by the master after
     `GoToSleep()` in detailed simulation# Changed
