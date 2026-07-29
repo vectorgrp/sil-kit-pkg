@@ -1,15 +1,14 @@
-libsilkit (5.0.6-1ubuntu1) stable; urgency=medium
+libsilkit (5.0.6-1ubuntu1) unstable; urgency=medium
+
   * `demo`: removed third-party dependency from performance test script
   * `docs`: Fixed ethernet docs and samples
   * `build`: Silence warning emitted from oatpp
   * `ci`: Fix version check and tooling in ci formatting check
   * `build`: Update deprecated syntax in devcontainter
 
- -- Konrad Breitsprecher <konrad.breitsprecher@vector.com> Thu, 11 Jun 2026 12:31:08 +0200
+ -- Konrad Breitsprecher <konrad.breitsprecher@vector.com>  Thu, 11 Jun 2026 12:31:08 +0200
 
 libsilkit (5.0.5-1ubuntu1) stable; urgency=medium
-  * `lin`: fixed missing reception of the Go-To-Sleep frame by the master after
-    `GoToSleep()` in detailed simulation# Changed
   * `cmake`: merged almost all internal CMake `INTERFACE` libraries into
     `I_SilKit`
   * `third-party`: update `oatpp` to version 1.3.1
@@ -21,7 +20,7 @@ libsilkit (5.0.5-1ubuntu1) stable; urgency=medium
     defined functions - remove an obsolete source file - adjust warning
     flags
 
- -- Lukas Becker <lukas.becker@vector.com> Thu, 21 May 2026 15:40:20 +0200
+ -- Lukas Becker <lukas.becker@vector.com>  Thu, 21 May 2026 15:40:20 +0200
 
 libsilkit (5.0.4-1ubuntu1) stable; urgency=medium
   * `docs`: removed 'Vector' prefix where SIL Kit is mentioned in multiple
@@ -31,7 +30,7 @@ libsilkit (5.0.4-1ubuntu1) stable; urgency=medium
   * `lin`: fixed TX/RX behavior when controller is not operational
   * `lin`: populate the `timestamp` field in `LinControllerStatusUpdate` message
 
- -- Daniel Edwards <daniel.edwards@vector.com> Fri, 27 Mar 2026 13:47:19 +0100
+ -- Daniel Edwards <daniel.edwards@vector.com>  Fri, 27 Mar 2026 13:47:19 +0100
 
 libsilkit (5.0.3-1ubuntu1) stable; urgency=medium
   * `sil-kit-registry`: fixed crash whith enabled dashboard
@@ -47,7 +46,7 @@ libsilkit (5.0.3-1ubuntu1) stable; urgency=medium
   * `cmake`: added explicit build options to QNX presets
   * `flexray`: add second keyslot parameters to the FlexRay node parameters
 
- -- Daniel Edwards <daniel.edwards@vector.com> Thu, 12 Feb 2026 21:12:42 +0100
+ -- Daniel Edwards <daniel.edwards@vector.com>  Thu, 12 Feb 2026 21:12:42 +0100
 
 libsilkit (5.0.2-1ubuntu1) stable; urgency=medium
   * `asio`: replaced the deprecated (and now removed) methods
@@ -87,13 +86,13 @@ libsilkit (5.0.2-1ubuntu1) stable; urgency=medium
   * `ci`: added a check to ensure that all commits are properly `Signed-of-by`
     as defined by [DCO](https://wiki.linuxfoundation.org/dco)
 
- -- Jan Kraemer <jan.kraemer@vector.com> Thu, 04 Dec 2025 11:33:30 +0100
+ -- Jan Kraemer <jan.kraemer@vector.com>  Thu, 04 Dec 2025 11:33:30 +0100
 
 libsilkit (5.0.2~rc1-1ubuntu1) UNRELEASED; urgency=medium
 
   * Do not enable the silkit-registry.service by default
 
- -- Jan Kraemer <jan.kraemer@vector.com>  Wed, 24 Aug 2025 17:00:00 +0200
+ -- Jan Kraemer <jan.kraemer@vector.com>   Wed, 24 Aug 2025 17:00:00 +0200
 
 libsilkit (5.0.1-1ubuntu1) UNRELEASED; urgency=medium
 
