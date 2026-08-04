@@ -36,6 +36,10 @@ libsilkit (5.0.7-1ubuntu1) stable; urgency=medium
     valid.
   * `orchestration`: setting a simulation step duration of zero now raises a
     `SilKitError` instead of being silently accepted.
+  *`logging`: Fixes a bug where some log messages (e.g., user-level log
+    messages) were passed to fmt and caused exceptions when placeholder
+    characters were present. These log messages are no longer passed to
+    fmt.
 
  -- Konrad Breitsprecher <konrad.breitsprecher@vector.com>  Wed, 29 Jul 2026 14:24:29 +0200
 
@@ -133,7 +137,7 @@ libsilkit (5.0.2~rc1-1ubuntu1) UNRELEASED; urgency=medium
 
   * Do not enable the silkit-registry.service by default
 
- -- Jan Kraemer <jan.kraemer@vector.com>   Wed, 24 Aug 2025 17:00:00 +0200
+ -- Jan Kraemer <jan.kraemer@vector.com>  Wed, 24 Aug 2025 17:00:00 +0200
 
 libsilkit (5.0.1-1ubuntu1) UNRELEASED; urgency=medium
 

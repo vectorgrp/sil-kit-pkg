@@ -127,6 +127,10 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
   is now rejected with a clear error. A single leading `---` remains valid.
 - `orchestration`: setting a simulation step duration of zero now raises a
   `SilKitError` instead of being silently accepted.
+- `logging`: Fixes a bug where some log messages (e.g., user-level log
+  messages) were passed to fmt and caused exceptions when placeholder
+  characters were present. These log messages are no longer passed to
+  fmt.
 
 * Thu Jun 11 2026 Konrad Breitsprecher <konrad.breitsprecher@vector.com> - 5.0.6
 - `demo`: removed third-party dependency from performance test script
