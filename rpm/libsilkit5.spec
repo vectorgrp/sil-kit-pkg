@@ -1,6 +1,6 @@
 %define version_major 5
 %define version_minor 0
-%define version_patch 7
+%define version_patch 8
 %define version_suffix %{nil}
 
 
@@ -89,6 +89,21 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}/%{_unitdir}/
 %{_unitdir}/sil-kit-registry.service
 
 %changelog
+
+* Tue Aug 18 2026 asd <asd> - 5.0.8
+- Add Integration Test for Timestamp Behavior# Fixed
+- Fix ITest_AsyncSimTask (test failed when run repeatedly)# Changed
+- Changes to the SIL KIT MSI installer: - Default installation path changed
+  from `<ProgramFilesFolder>\Vector SIL Kit <VERSION>` to
+  `<ProgramFilesFolder>\SIL Kit <VERSION>` - Windows System Service Name
+  changed from `VectorSilKitRegistry` to `SilKitRegistry` - SIL Kit Registry
+  System Service config file installation path changed from
+  `<ProgramDataFolder>\Vector SIL Kit\silkit-registry.yaml` to
+  `<ProgramDataFolder>\SIL Kit\silkit-registry.yaml` - Note that the
+  `<ProgramDataFolder>\Vector SIL Kit` is not removed by installing
+  `SilKit-5.0.8.msi`.
+- `TimeSyncService` now throws `LogicError{"TimeSyncPolicy is not set"}` if
+  `CompleteSimulationStep` is used before `StartLifecyle`.
 
 * Wed Jul 29 2026 Konrad Breitsprecher <konrad.breitsprecher@vector.com> - 5.0.7
 - `config`: experimental topic based filtering of log messages per logging
