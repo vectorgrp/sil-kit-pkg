@@ -1,0 +1,92 @@
+name: "Update Changelogs"
+
+# Takes the newest entry of the SIL Kit changelog (docs/changelog/versions/latest.md),
+# adds it to debian/changelog and rpm/libsilkit5.spec and opens a pull request for review.
+# Moved here from sil-kit-delivery (update_packaging_changelogs.yml).
+
+on:
+  workflow_dispatch:
+    inputs:
+      silkit_ref:
+        description: "sil-kit branch, tag or commit to read the changelog from"
+        required: true
+        type: string
+        default: main
+      author:
+        description: "Name of the developer creating the release"
+        required: true
+        type: string
+      email:
+        description: "Email of the developer creating the release (no generic addresses)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    name: Update changelogs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check email
+        env:
+          EMAIL: ${{ inputs.email }}
+        run: |
+          case "$EMAIL" in
+            sil-kit@*|silkit@*|noreply@*|*@users.noreply.github.com)
+              echo "::error::use your personal email address, not $EMAIL"
+              exit 1
+              ;;
+          esac
+
+      - name: Checkout (sil-kit-pkg)
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          path: sil-kit-pkg
+
+      - name: Checkout (sil-kit)
+        uses: actions/checkout@v6
+        with:
+          repository: vectorgrp/sil-kit
+          ref: ${{ inputs.silkit_ref }}
+          path: sil-kit
+
+      - name: Run tests
+        working-directory: sil-kit-pkg
+        run: python3 -m unittest discover -s tests -p "test_changelog*.py"
+
+      - name: Update changelogs
+        id: convert
+        env:
+          AUTHOR: ${{ inputs.author }}
+          EMAIL: ${{ inputs.email }}
+        run: |
+          python3 sil-kit-pkg/scripts/changelog_converter.py "$AUTHOR" "$EMAIL" sil-kit-pkg \
+            --changelog sil-kit/docs/changelog/versions/latest.md
+
+      - name: Push and open pull request
+        working-directory: sil-kit-pkg
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AUTHOR: ${{ inputs.author }}
+          EMAIL: ${{ inputs.email }}
+          VERSION: ${{ steps.convert.outputs.silkit_version }}
+        run: |
+          branch="update_to_${VERSION}"
+          git config user.name "$AUTHOR"
+          git config user.email "$EMAIL"
+          git switch -c "$branch"
+          git add debian/changelog rpm/libsilkit5.spec
+          git commit -s -m "changelog: Update to ${VERSION}"
+          git push --force origin "$branch"
+
+          if gh pr view "$branch" --json url --jq .url 2>/dev/null; then
+            echo "Pull request exists, the push updated it."
+          else
+            gh pr create --base main --head "$branch" \
+              --title "changelog: Update to ${VERSION}" \
+              --body "Changelog entries for SIL Kit ${VERSION} from vectorgrp/sil-kit@${{ inputs.silkit_ref }} (docs/changelog/versions/latest.md). Please review before the delivery build."
+          fi
