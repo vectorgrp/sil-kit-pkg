@@ -1,0 +1,110 @@
+{
+  "comment": [
+    "Single source of truth for the Linux packages of SIL Kit.",
+    "package-silkit.yml builds every target; sil-kit-delivery publishes the assets of targets with release: true",
+    "to the vectorgrp/sil-kit and vectorgrp/sil-kit-pkg releases.",
+    "Images are pinned by digest once build-images.yml has published them (see README.rst)."
+  ],
+  "targets": [
+    {
+      "id": "ubuntu-20.04-x86_64-deb",
+      "runs_on": "ubuntu-latest",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/ubuntu-2004:main",
+      "container_options": "",
+      "pkgformat": "deb",
+      "platform": "Ubuntu-20.04",
+      "debuild_args": [
+        "-d",
+        "--prepend-path=/opt/cmake/bin"
+      ],
+      "test_image": "ubuntu:20.04",
+      "release": true,
+      "assets": [
+        "libsilkit5_*_amd64.deb",
+        "libsilkit-dev_*_amd64.deb",
+        "silkit-utils_*_amd64.deb",
+        "libsilkit5-dbgsym_*_amd64.ddeb",
+        "libsilkit_*_amd64.buildinfo"
+      ]
+    },
+    {
+      "id": "ubuntu-20.04-x86_64-tgz",
+      "runs_on": "ubuntu-latest",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/ubuntu-2004:main",
+      "container_options": "",
+      "pkgformat": "tgz",
+      "platform": "ubuntu2004",
+      "test_image": "ubuntu:20.04",
+      "release": true,
+      "assets": [
+        "libsilkit-*.ubuntu2004.x86_64.tar.gz",
+        "libsilkit-*.ubuntu2004.x86_64.debug.tar.gz"
+      ]
+    },
+    {
+      "id": "centos-7-x86_64-tgz",
+      "runs_on": "ubuntu-latest",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/centos-7:main",
+      "container_options": "",
+      "pkgformat": "tgz",
+      "platform": "el7",
+      "test_image": "centos:7",
+      "release": true,
+      "assets": [
+        "libsilkit-*.el7.x86_64.tar.gz",
+        "libsilkit-*.el7.x86_64.debug.tar.gz"
+      ]
+    },
+    {
+      "id": "alma-8-x86_64-tgz",
+      "runs_on": "ubuntu-latest",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/alma-8:main",
+      "container_options": "",
+      "pkgformat": "tgz",
+      "platform": "el8",
+      "test_image": "almalinux:8",
+      "release": true,
+      "assets": [
+        "libsilkit-*.el8.x86_64.tar.gz",
+        "libsilkit-*.el8.x86_64.debug.tar.gz"
+      ]
+    },
+    {
+      "id": "ubuntu-22.04-aarch64-deb",
+      "runs_on": "ubuntu-22.04-arm",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/ubuntu-2204:main",
+      "container_options": "",
+      "pkgformat": "deb",
+      "platform": "Ubuntu-22.04",
+      "debuild_args": [
+        "-d",
+        "--prepend-path=/opt/cmake/bin"
+      ],
+      "test_image": "ubuntu:22.04",
+      "release": false,
+      "assets": [
+        "libsilkit5_*_arm64.deb",
+        "libsilkit-dev_*_arm64.deb",
+        "silkit-utils_*_arm64.deb",
+        "libsilkit5-dbgsym_*_arm64.ddeb",
+        "libsilkit_*_arm64.buildinfo"
+      ]
+    },
+    {
+      "id": "alma-9-x86_64-rpm",
+      "runs_on": "ubuntu-latest",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/fedora-40:main",
+      "container_options": "--privileged",
+      "pkgformat": "rpm",
+      "platform": "epel9",
+      "test_image": "almalinux:9",
+      "release": false,
+      "assets": [
+        "libsilkit5-*.el9.x86_64.rpm",
+        "libsilkit5-devel-*.el9.x86_64.rpm",
+        "libsilkit5-utils-*.el9.x86_64.rpm",
+        "libsilkit5-debuginfo-*.el9.x86_64.rpm"
+      ]
+    }
+  ]
+}

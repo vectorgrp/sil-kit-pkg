@@ -1,0 +1,85 @@
+name: "Rebuild Check"
+
+# Builds all packages twice, one build after the other, and compares the sha256 of every
+# file. A mismatch means the build is not reproducible; diffoscope shows where.
+
+on:
+  workflow_dispatch:
+    inputs:
+      silkit_ref:
+        description: "sil-kit commit SHA or tag (vectorgrp/sil-kit)"
+        required: true
+        type: string
+        default: main
+  schedule:
+    - cron: "0 3 * * 1"
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  first:
+    uses: ./.github/workflows/package-silkit.yml
+    with:
+      silkit_ref: ${{ inputs.silkit_ref || 'main' }}
+      artifact_suffix: -first
+
+  second:
+    needs: first
+    uses: ./.github/workflows/package-silkit.yml
+    with:
+      silkit_ref: ${{ inputs.silkit_ref || 'main' }}
+      artifact_suffix: -second
+
+  compare:
+    needs: [first, second]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download first build
+        uses: actions/download-artifact@v4
+        with:
+          name: sil-kit-pkg-first
+          path: first
+
+      - name: Download second build
+        uses: actions/download-artifact@v4
+        with:
+          name: sil-kit-pkg-second
+          path: second
+
+      - name: Compare
+        id: compare
+        run: |
+          jq -r '.files[] | "\(.name) \(.sha256)"' first/pkg-manifest.json | sort > first.sha
+          jq -r '.files[] | "\(.name) \(.sha256)"' second/pkg-manifest.json | sort > second.sha
+          if diff -u first.sha second.sha; then
+            echo "All $(wc -l < first.sha) files are identical." >> "$GITHUB_STEP_SUMMARY"
+          else
+            join first.sha second.sha | awk '$2 != $3 { print $1 }' > differing.txt
+            echo "Not reproducible:" >> "$GITHUB_STEP_SUMMARY"
+            sed 's/^/- /' differing.txt >> "$GITHUB_STEP_SUMMARY"
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: diffoscope
+        if: steps.compare.outputs.failed == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends diffoscope
+          mkdir -p diffoscope
+          while read -r name; do
+            diffoscope --html "diffoscope/${name}.html" "first/${name}" "second/${name}" || true
+          done < differing.txt
+
+      - name: Upload diffoscope reports
+        if: steps.compare.outputs.failed == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: diffoscope
+          path: diffoscope/
+          retention-days: 30
+
+      - name: Fail
+        if: steps.compare.outputs.failed == 'true'
+        run: exit 1

@@ -48,6 +48,63 @@ Currently we support building the packages on the following platforms:
 * Fedora
     * 40+
 
+In addition, relocatable binary tarballs (``pkgformat: tgz``) are built for:
+
+* Ubuntu 20.04 (``ubuntu2004``)
+* CentOS 7 (``el7``)
+* AlmaLinux 8 (``el8``)
+
+``el7``/``el8``/``el9`` stand for Enterprise Linux 7/8/9, i.e. RHEL and its binary compatible
+rebuilds (CentOS 7 = el7, AlmaLinux 8 = el8, AlmaLinux 9 = el9).
+
+Release definition
+==================
+
+``release/packages.json`` is the single source of truth for the Linux packages. Every entry
+(target) names the build image, the package format and platform, the plain distribution image
+used for the smoke test, whether it is released (``release``) and the files that make up the
+package (``assets``, glob patterns).
+
+The packaging workflow builds every target. sil-kit-delivery publishes the assets of all targets
+with ``"release": true`` to the GitHub releases of ``vectorgrp/sil-kit`` and ``vectorgrp/sil-kit-pkg``.
+
+Containers
+==========
+
+The build images live in ``containers/`` and are published to
+``ghcr.io/vectorgrp/sil-kit-pkg/<name>`` by the ``Build Images`` workflow
+(``.github/workflows/build-images.yml``) on every change on ``main``:
+
+* ``ubuntu-2004``: deb and tarball for Ubuntu 20.04
+* ``ubuntu-2204``: arm64 deb (built on an arm64 runner)
+* ``centos-7``: el7 tarball, devtoolset-11
+* ``alma-8``: el8 tarball, gcc-toolset-12
+* ``fedora-40``: el9 rpm via mock
+
+Only public sources are used: base images are pinned by digest, CMake comes from the official
+Kitware release and ninja from the official PyPI wheel, both verified by sha256. Once the images
+are published, pin them by digest in ``release/packages.json``
+(``ghcr.io/vectorgrp/sil-kit-pkg/<name>@sha256:...``, the digest is in the job summary of the
+``Build Images`` run).
+
+Tarballs
+========
+
+``libsilkit-$VERSION.<platform>.x86_64.tar.gz`` contains ``bin/``, ``lib/`` (with the CMake
+package config in ``lib/cmake/SilKit``), ``include/``, ``share/man/man1/``,
+``share/sil-kit/sil-kit-registry.service`` and ``share/doc/libsilkit/`` (``CHANGELOG.md``,
+``LICENSE``, ``README.rst``). It can be extracted anywhere::
+
+    tar -xzf libsilkit-$VERSION.el7.x86_64.tar.gz
+    cmake -DCMAKE_PREFIX_PATH=$PWD/libsilkit-$VERSION.el7.x86_64 ...
+
+The debug symbols are in ``libsilkit-$VERSION.<platform>.x86_64.debug.tar.gz`` under
+``lib/debug/.build-id/``. Point gdb at them with ``set debug-file-directory <extracted>/lib/debug``.
+
+The tarballs are reproducible: the same sil-kit commit, sil-kit-pkg commit and image give
+identical files (``SOURCE_DATE_EPOCH`` is the commit time of the sil-kit sources). The
+``Rebuild Check`` workflow verifies this by building everything twice.
+
 Setting up the build environment
 ================================
 
@@ -115,7 +172,7 @@ Let's examine an example config to build a SIL Kit package: ::
     * Additional version suffix of the package
 
 * pkgformat
-    * Determines the package type to build. ``deb`` for Debian/Ubuntu builds. ``rpm`` for RedHat/Fedora builds.
+    * Determines the package type to build. ``deb`` for Debian/Ubuntu builds. ``rpm`` for RedHat/Fedora builds. ``tgz`` for the relocatable tarballs.
 * work_dir
     * The directory where the build is happening
 * keep_temp
@@ -131,6 +188,7 @@ Let's examine an example config to build a SIL Kit package: ::
         * epel8
         * epel9
         * fc40
+        * ubuntu2004, el7, el8 (``tgz``)
 
 Fedora Extra Packages for Enterprise Linux
 -------------------------------------------
@@ -162,15 +220,6 @@ Debian requires the Maintainer environment variables to be set correctly:
     export DEBFULLNAME="Awesome Dev"
     export DEBEMAIL="awesome_dev@your-domain.something"
 
-Additional Parameters for the CI
-================================
-
-In addition to the environment variables (used by build_deb.sh), the Github Action uses some more inputs to identify/store the correct artifacts
-
-* debian_arch
-
-    The cpu architecture the debian package is build for. Currently we only support/test on **amd64**
-
 Building the package
 ====================
 
@@ -200,30 +249,19 @@ The rest of the config can use the template values. Then all you need to run is:
 Github CI
 ---------
 
-If you have forked sil-kit-pkg and you can use Github Actions, this is how you can build a libsilkit4 package
+The ``SilKit Packaging Workflow`` (``.github/workflows/package-silkit.yml``) builds all targets of
+``release/packages.json``, tests every package in the plain ``test_image`` of its target and
+uploads the result as the artifact ``sil-kit-pkg`` (kept for 30 days): all assets,
+``pkg-manifest.json`` (sil-kit commit and submodules, sil-kit-pkg commit, image digests,
+sha256 and size of every file) and ``SHA256``.
 
-How to get to the Action
-************************
+sil-kit-delivery starts it for every delivery build. To run it manually:
 
-* Click on the ``Actions`` tab in your Github repo
-* Click on the ``Silkit Packaging Workflow`` tab
-* Click on the ``Run Workflow`` tab
+* Click on the ``Actions`` tab, then ``SilKit Packaging Workflow``, then ``Run workflow``
+* Choose the sil-kit-pkg branch or tag to build from
+* ``silkit_ref``: the sil-kit commit SHA or tag, e.g. ``v5.0.8``
+* optional: ``expected_version`` fails the run if ``debian/changelog``, ``rpm/libsilkit5.spec``
+  and the sil-kit sources do not all have this version
+* optional: maintainer name and email for the Debian build (default: ``Maintainer`` in ``debian/control``)
 
-Setup for the Workflow
-**********************
-
-* SIL Kit Repository URL
-  Set to the sil-kit github repo
-* SIL Kit Source Repo ref
-  Set to the branch/tag/commit id of the sil-kit repo you want to use
-* sil-kit-pkg ref
-  If you want to build a release you can set the this to a release tag
-* Maintainer name (only used on Debian/Ubuntu)
-  Name of the maintainer creating the package
-* Maintainer email (only used on Debian/Ubuntu)
-  Email of the maintainer creating the package
-
-* DEBIAN_ARCH
-    amd64
-
-Click the ``Run Workflow`` Button. Packages for Ubuntu 20.04 and Alma Linux 9 will be in the artifacts of this Workflow run.
+GitHub releases are created by sil-kit-delivery from this artifact, not by this repository.
