@@ -20,12 +20,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 COPY --from=utils install-cmake.sh /tmp/install-cmake.sh
 
 # snapshot.ubuntu.com is served over https only, so ca-certificates comes from the
-# regular archive first.
+# regular archive first. The snapshot service has no ubuntu-ports (arm64): there apt
+# reads the regular ports archive and the image digest pins the result.
 RUN apt-get update \
 &&  apt-get install --no-install-recommends --no-install-suggests -y ca-certificates \
 &&  sed -i -E \
         -e "s#http://(archive|security)\.ubuntu\.com/ubuntu/?#https://snapshot.ubuntu.com/ubuntu/${UBUNTU_SNAPSHOT}/#" \
-        -e "s#http://ports\.ubuntu\.com/ubuntu-ports/?#https://snapshot.ubuntu.com/ubuntu-ports/${UBUNTU_SNAPSHOT}/#" \
         /etc/apt/sources.list \
 &&  apt-get update \
 &&  apt-get install --no-install-recommends --no-install-suggests -y \
