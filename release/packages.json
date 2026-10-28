@@ -9,7 +9,7 @@
     {
       "id": "ubuntu-20.04-x86_64-deb",
       "runs_on": "ubuntu-latest",
-      "image": "ghcr.io/vectorgrp/sil-kit-pkg/ubuntu-2004:main",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/ubuntu-2004@sha256:82dec8dab95de332330d614d6f27f39695295bdf2f7164405a2f0d046d108c61",
       "container_options": "",
       "pkgformat": "deb",
       "platform": "Ubuntu-20.04",
@@ -30,7 +30,7 @@
     {
       "id": "ubuntu-20.04-x86_64-tgz",
       "runs_on": "ubuntu-latest",
-      "image": "ghcr.io/vectorgrp/sil-kit-pkg/ubuntu-2004:main",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/ubuntu-2004@sha256:82dec8dab95de332330d614d6f27f39695295bdf2f7164405a2f0d046d108c61",
       "container_options": "",
       "pkgformat": "tgz",
       "platform": "ubuntu2004",
@@ -44,7 +44,7 @@
     {
       "id": "centos-7-x86_64-tgz",
       "runs_on": "ubuntu-latest",
-      "image": "ghcr.io/vectorgrp/sil-kit-pkg/centos-7:main",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/centos-7@sha256:726cdaf033a2f97de3fd25a7692fcca4634bc97312d69bb572c5cbb2632648e2",
       "container_options": "",
       "pkgformat": "tgz",
       "platform": "el7",
@@ -58,7 +58,7 @@
     {
       "id": "alma-8-x86_64-tgz",
       "runs_on": "ubuntu-latest",
-      "image": "ghcr.io/vectorgrp/sil-kit-pkg/alma-8:main",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/alma-8@sha256:c9d7ebdfcab16cc7f514d533f4abfe843abf9cdb4254e7c1c795c3494acb73b1",
       "container_options": "",
       "pkgformat": "tgz",
       "platform": "el8",
@@ -72,7 +72,7 @@
     {
       "id": "ubuntu-22.04-aarch64-deb",
       "runs_on": "ubuntu-22.04-arm",
-      "image": "ghcr.io/vectorgrp/sil-kit-pkg/ubuntu-2204:main",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/ubuntu-2204@sha256:7aa2ae3be3e4e578ac556ebe9f0c65a326fac4238f254a72fa0a437cf0771c40",
       "container_options": "",
       "pkgformat": "deb",
       "platform": "Ubuntu-22.04",
@@ -93,7 +93,7 @@
     {
       "id": "alma-9-x86_64-rpm",
       "runs_on": "ubuntu-latest",
-      "image": "ghcr.io/vectorgrp/sil-kit-pkg/fedora-40:main",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/fedora-40@sha256:c2fd7f079d15ee24958bae12d056915684e1fc335002e05258019fdde88e9dac",
       "container_options": "--privileged",
       "pkgformat": "rpm",
       "platform": "epel9",
