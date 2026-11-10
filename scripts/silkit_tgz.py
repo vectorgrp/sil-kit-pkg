@@ -24,10 +24,10 @@ logger.propagate = False
 class SilKitTGZ(SilKitPKG):
     """Relocatable binary tarball plus a separate debug symbol tarball.
 
-    Layout of libsilkit-<version>.<platform>.x86_64.tar.gz:
+    Layout of silkit-<version>.<platform>.x86_64.tar.gz:
         bin/, lib/ (libSilKit.so*, cmake/SilKit), include/, share/man/man1/,
         share/sil-kit/sil-kit-registry.service, share/doc/libsilkit/
-    Layout of libsilkit-<version>.<platform>.x86_64.debug.tar.gz:
+    Layout of silkit-<version>.<platform>.x86_64.debug.tar.gz:
         lib/debug/.build-id/xx/yyyy.debug
     """
 
@@ -50,7 +50,7 @@ class SilKitTGZ(SilKitPKG):
     def package_name(self):
         # '~' is not kept by GitHub release assets, use '-' for suffixes like rc1
         version = str(self.build_info.version).replace("~", "-")
-        return f"libsilkit-{version}.{self.build_info.platform}.x86_64"
+        return f"silkit-{version}.{self.build_info.platform}.x86_64"
 
     def setup_build_env(self):
         self.build_flags = SilKitTGZ.__get_build_flags(self.build_info.platform)

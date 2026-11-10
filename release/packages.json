@@ -37,8 +37,8 @@
       "test_image": "ubuntu:20.04",
       "release": true,
       "assets": [
-        "libsilkit-*.ubuntu2004.x86_64.tar.gz",
-        "libsilkit-*.ubuntu2004.x86_64.debug.tar.gz"
+        "silkit-*.ubuntu2004.x86_64.tar.gz",
+        "silkit-*.ubuntu2004.x86_64.debug.tar.gz"
       ]
     },
     {
@@ -51,8 +51,8 @@
       "test_image": "centos:7",
       "release": true,
       "assets": [
-        "libsilkit-*.el7.x86_64.tar.gz",
-        "libsilkit-*.el7.x86_64.debug.tar.gz"
+        "silkit-*.el7.x86_64.tar.gz",
+        "silkit-*.el7.x86_64.debug.tar.gz"
       ]
     },
     {
@@ -65,8 +65,8 @@
       "test_image": "almalinux:8",
       "release": true,
       "assets": [
-        "libsilkit-*.el8.x86_64.tar.gz",
-        "libsilkit-*.el8.x86_64.debug.tar.gz"
+        "silkit-*.el8.x86_64.tar.gz",
+        "silkit-*.el8.x86_64.debug.tar.gz"
       ]
     },
     {
