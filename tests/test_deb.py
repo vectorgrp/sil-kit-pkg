@@ -65,8 +65,8 @@ def extract_tarball(tgz_directory, test_dir) -> Path:
 
     print("\nExtract SilKit tarball")
     print("--------------------------------\n", flush=True)
-    tarballs = [t for t in tgz_directory.glob('libsilkit-*.tar.gz') if not t.name.endswith('.debug.tar.gz')]
-    debug_tarballs = list(tgz_directory.glob('libsilkit-*.debug.tar.gz'))
+    tarballs = [t for t in tgz_directory.glob('silkit-*.tar.gz') if not t.name.endswith('.debug.tar.gz')]
+    debug_tarballs = list(tgz_directory.glob('silkit-*.debug.tar.gz'))
     if len(tarballs) != 1 or len(debug_tarballs) != 1:
         print(f"Expected one tarball and one debug tarball in {tgz_directory}, found {tarballs} and {debug_tarballs}")
         exit(64)
