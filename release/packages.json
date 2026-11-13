@@ -70,6 +70,20 @@
       ]
     },
     {
+      "id": "alma-8-aarch64-tgz",
+      "runs_on": "ubuntu-22.04-arm",
+      "image": "ghcr.io/vectorgrp/sil-kit-pkg/alma-8:main",
+      "container_options": "",
+      "pkgformat": "tgz",
+      "platform": "el8",
+      "test_image": "almalinux:8",
+      "release": true,
+      "assets": [
+        "silkit-*.el8.aarch64.tar.gz",
+        "silkit-*.el8.aarch64.debug.tar.gz"
+      ]
+    },
+    {
       "id": "ubuntu-22.04-aarch64-deb",
       "runs_on": "ubuntu-22.04-arm",
       "image": "ghcr.io/vectorgrp/sil-kit-pkg/ubuntu-2204:main",
