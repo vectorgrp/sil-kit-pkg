@@ -1,0 +1,3 @@
+# Scripts and Dockerfiles run inside Linux containers, keep LF also in Windows checkouts
+*.sh text eol=lf
+Dockerfile text eol=lf
