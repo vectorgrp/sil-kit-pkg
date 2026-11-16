@@ -8,13 +8,18 @@
 # with an incomplete package list, so a later apt-get install fails with a misleading
 # "Unable to locate package". snapshot.ubuntu.com often answers single requests with
 # 500/503; already downloaded indexes are kept between attempts.
-# Also enables apt's own retries for the package downloads that follow.
+# apt's own retries (for indexes and packages) are enabled and HTTP pipelining is
+# disabled, so requests reach the snapshot backend one at a time per connection.
 set -eu
 
 attempts="${APT_UPDATE_ATTEMPTS:-6}"
 log=/tmp/apt-update.log
 
-echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-sil-kit-pkg-retries
+cat > /etc/apt/apt.conf.d/80-sil-kit-pkg-retries <<'CONF'
+Acquire::Retries "5";
+Acquire::http::Pipeline-Depth "0";
+Acquire::https::Pipeline-Depth "0";
+CONF
 
 i=1
 while :; do
