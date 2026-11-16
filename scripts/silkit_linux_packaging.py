@@ -16,6 +16,7 @@ from silkit_pkg_utils import set_global_loglevel, get_global_loglevel, get_globa
 from silkit_pkg_interface import SilKitPKG
 from silkit_deb import SilKitDEB
 from silkit_rpm import SilKitRPM
+from silkit_tgz import SilKitTGZ
 
 logger = logging.getLogger("SilKit Packaging")
 
@@ -25,6 +26,8 @@ def PkgClassFactory(build_info: BuildInfo) -> SilKitPKG:
         return SilKitDEB(build_info)
     elif build_info.pkgformat.lower() == "rpm":
         return SilKitRPM(build_info)
+    elif build_info.pkgformat.lower() == "tgz":
+        return SilKitTGZ(build_info)
     else:
         raise NotImplementedError(f"PKG format {build_info.pkgformat} is not implemented yet!")
 
