@@ -18,16 +18,19 @@ ENV LANG=C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
 
 COPY --from=utils install-cmake.sh /tmp/install-cmake.sh
+COPY --from=utils apt-update.sh /tmp/apt-update.sh
 
 # snapshot.ubuntu.com is served over https only, so ca-certificates comes from the
 # regular archive first. The snapshot service has no ubuntu-ports (arm64): there apt
 # reads the regular ports archive and the image digest pins the result.
-RUN apt-get update \
+# apt-update.sh retries until every index file is downloaded (the snapshot service
+# often answers single requests with 500/503).
+RUN sh /tmp/apt-update.sh \
 &&  apt-get install --no-install-recommends --no-install-suggests -y ca-certificates \
 &&  sed -i -E \
         -e "s#http://(archive|security)\.ubuntu\.com/ubuntu/?#https://snapshot.ubuntu.com/ubuntu/${UBUNTU_SNAPSHOT}/#" \
         /etc/apt/sources.list \
-&&  apt-get update \
+&&  sh /tmp/apt-update.sh \
 &&  apt-get install --no-install-recommends --no-install-suggests -y \
       binutils \
       build-essential \
@@ -56,6 +59,6 @@ RUN apt-get update \
 &&  sh /tmp/install-cmake.sh \
 &&  dpkg-query -W -f '${Package} ${Version}\n' > /etc/sil-kit-pkg-image-packages.txt \
 &&  apt-get clean \
-&&  rm -rf /var/lib/apt/lists/* /tmp/install-cmake.sh
+&&  rm -rf /var/lib/apt/lists/* /tmp/install-cmake.sh /tmp/apt-update.sh
 
 ENV PATH="/opt/cmake/bin:${PATH}"
