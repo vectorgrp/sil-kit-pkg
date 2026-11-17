@@ -34,16 +34,16 @@ jobs:
 
   compare:
     needs: [first, second]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Download first build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: sil-kit-pkg-first
           path: first
 
       - name: Download second build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: sil-kit-pkg-second
           path: second

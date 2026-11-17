@@ -62,7 +62,7 @@ jobs:
 
   targets:
     name: Targets and version
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
       major: ${{ steps.version.outputs.major }}
@@ -140,7 +140,7 @@ jobs:
           path: sil-kit
 
       - name: Log in to ghcr.io
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -227,7 +227,7 @@ jobs:
           path: sil-kit-pkg
 
       - name: Download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: pkg-${{ matrix.id }}${{ env.ARTIFACT_SUFFIX }}
           path: dist
@@ -240,7 +240,7 @@ jobs:
   collect:
     name: Collect
     needs: [targets, test]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout (sil-kit-pkg)
         uses: actions/checkout@v6
@@ -248,7 +248,7 @@ jobs:
           path: sil-kit-pkg
 
       - name: Download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: pkg-*${{ env.ARTIFACT_SUFFIX }}
           path: targets
