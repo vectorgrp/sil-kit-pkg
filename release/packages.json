@@ -8,7 +8,7 @@
   "targets": [
     {
       "id": "ubuntu-20.04-x86_64-deb",
-      "runs_on": "ubuntu-latest",
+      "runs_on": "ubuntu-24.04",
       "image": "ghcr.io/vectorgrp/sil-kit-pkg/ubuntu-2004:main",
       "container_options": "",
       "pkgformat": "deb",
@@ -29,7 +29,7 @@
     },
     {
       "id": "ubuntu-20.04-x86_64-tgz",
-      "runs_on": "ubuntu-latest",
+      "runs_on": "ubuntu-24.04",
       "image": "ghcr.io/vectorgrp/sil-kit-pkg/ubuntu-2004:main",
       "container_options": "",
       "pkgformat": "tgz",
@@ -43,7 +43,7 @@
     },
     {
       "id": "centos-7-x86_64-tgz",
-      "runs_on": "ubuntu-latest",
+      "runs_on": "ubuntu-24.04",
       "image": "ghcr.io/vectorgrp/sil-kit-pkg/centos-7:main",
       "container_options": "",
       "pkgformat": "tgz",
@@ -57,7 +57,7 @@
     },
     {
       "id": "alma-8-x86_64-tgz",
-      "runs_on": "ubuntu-latest",
+      "runs_on": "ubuntu-24.04",
       "image": "ghcr.io/vectorgrp/sil-kit-pkg/alma-8:main",
       "container_options": "",
       "pkgformat": "tgz",
@@ -106,7 +106,7 @@
     },
     {
       "id": "alma-9-x86_64-rpm",
-      "runs_on": "ubuntu-latest",
+      "runs_on": "ubuntu-24.04",
       "image": "ghcr.io/vectorgrp/sil-kit-pkg/fedora-40:main",
       "container_options": "--privileged",
       "pkgformat": "rpm",
