@@ -73,12 +73,14 @@ Containers
 
 The build images live in ``containers/`` and are published to
 ``ghcr.io/vectorgrp/sil-kit-pkg/<name>`` by the ``Build Images`` workflow
-(``.github/workflows/build-images.yml``) on every change on ``main``:
+(``.github/workflows/build-images.yml``) on every change on ``main``. Each architecture is built
+natively on its own runner; ``:main`` is a multi-arch image, so the same reference works on x86_64
+and arm64 runners:
 
 * ``ubuntu-2004``: deb and tarball for Ubuntu 20.04
 * ``ubuntu-2204``: arm64 deb (built on an arm64 runner)
 * ``centos-7``: el7 tarball, devtoolset-11
-* ``alma-8``: el8 tarball, gcc-toolset-12
+* ``alma-8``: el8 tarball, gcc-toolset-12 (x86_64 and arm64)
 * ``fedora-40``: el9 rpm via mock
 
 Only public sources are used: base images are pinned by digest, CMake comes from the official
@@ -90,7 +92,7 @@ are published, pin them by digest in ``release/packages.json``
 Tarballs
 ========
 
-``silkit-$VERSION.<platform>.x86_64.tar.gz`` contains ``bin/``, ``lib/`` (with the CMake
+``silkit-$VERSION.<platform>.<arch>.tar.gz`` (``<arch>`` is ``x86_64`` or ``aarch64``) contains ``bin/``, ``lib/`` (with the CMake
 package config in ``lib/cmake/SilKit``), ``include/``, ``share/man/man1/``,
 ``share/sil-kit/sil-kit-registry.service`` and ``share/doc/libsilkit/`` (``CHANGELOG.md``,
 ``LICENSE``, ``README.rst``). It can be extracted anywhere::
@@ -98,7 +100,7 @@ package config in ``lib/cmake/SilKit``), ``include/``, ``share/man/man1/``,
     tar -xzf silkit-$VERSION.el7.x86_64.tar.gz
     cmake -DCMAKE_PREFIX_PATH=$PWD/silkit-$VERSION.el7.x86_64 ...
 
-The debug symbols are in ``silkit-$VERSION.<platform>.x86_64.debug.tar.gz`` under
+The debug symbols are in ``silkit-$VERSION.<platform>.<arch>.debug.tar.gz`` under
 ``lib/debug/.build-id/``. Point gdb at them with ``set debug-file-directory <extracted>/lib/debug``.
 
 The tarballs are reproducible: the same sil-kit commit, sil-kit-pkg commit and image give
